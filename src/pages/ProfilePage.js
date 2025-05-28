@@ -15,36 +15,30 @@ export default function ProfilePage() {
     const [deleting, setDeleting] = useState(false);
     const [error, setError] = useState(null);
 
-    const loadProfileData = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            // apiService.getSavedProfile() now hits GET /api/profile/saved
-            const responseData = await apiService.getSavedProfile();
-            if (responseData && responseData.profile_data) { // Assuming backend wraps profile in profile_data
-                setProfile(responseData.profile_data);
-            } else if (responseData && !responseData.profile_data && responseData.id && responseData.user_id) {
-                 // If backend returns the full saved_profiles row directly without a nested profile_data key
-                 // and profile_data is the actual profile object on that row.
-                 // This case might not be needed if backend always nests under profile_data key.
-                 setProfile(responseData.profile); // This was in your original PDF, might refer to the direct profile object
-            }
-            else {
-                setProfile(null);
-                setError("No saved profile data found or data is malformed. You can generate one.");
-            }
-        } catch (err) {
-            console.error('ProfilePage: Load profile error:', err);
-            if (err.response && err.response.status === 404) {
-                setError('No saved profile found. You can generate one from the home page.');
-            } else {
-                setError(err.message || 'Failed to load your saved profile.');
-            }
+    // In ProfilePage.js, loadProfileData function:
+const loadProfileData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+        const responseData = await apiService.getSavedProfile(); // This should be { profile: { ... } }
+        
+        // DEBUGGING: Log what responseData actually is
+        console.log("ProfilePage responseData:", responseData); 
+
+        if (responseData && responseData.profile) { // This is the key condition
+            setProfile(responseData.profile);    
+        } else {
             setProfile(null);
-        } finally {
-            setLoading(false);
+            setError("No saved profile data found or the data format is unexpected. You can generate one.");
         }
-    }, []);
+    } catch (err) {
+        // ... error handling ...
+        setProfile(null);
+    } finally {
+        setLoading(false);
+    }
+}, []);
+
 
     useEffect(() => {
         const token = localStorage.getItem('auth_token'); // Corrected
