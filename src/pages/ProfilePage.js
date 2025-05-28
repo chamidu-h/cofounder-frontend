@@ -10,7 +10,7 @@ import LanguageStats from '../components/LanguageStats';
 
 export default function ProfilePage() {
     const navigate = useNavigate();
-    const [profile, setProfile] = useState(null); // Will be { personal, technical } from profile_data
+    const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [deleting, setDeleting] = useState(false);
     const [error, setError] = useState(null);
@@ -19,12 +19,19 @@ export default function ProfilePage() {
         setLoading(true);
         setError(null);
         try {
-            const responseData = await apiService.getSavedProfile(); // Fetches from GET /api/profile
-            if (responseData && responseData.profile_data) {
+            // apiService.getSavedProfile() now hits GET /api/profile/saved
+            const responseData = await apiService.getSavedProfile();
+            if (responseData && responseData.profile_data) { // Assuming backend wraps profile in profile_data
                 setProfile(responseData.profile_data);
-            } else {
+            } else if (responseData && !responseData.profile_data && responseData.id && responseData.user_id) {
+                 // If backend returns the full saved_profiles row directly without a nested profile_data key
+                 // and profile_data is the actual profile object on that row.
+                 // This case might not be needed if backend always nests under profile_data key.
+                 setProfile(responseData.profile); // This was in your original PDF, might refer to the direct profile object
+            }
+            else {
                 setProfile(null);
-                setError("No saved profile data found. You can generate one.");
+                setError("No saved profile data found or data is malformed. You can generate one.");
             }
         } catch (err) {
             console.error('ProfilePage: Load profile error:', err);
@@ -40,7 +47,7 @@ export default function ProfilePage() {
     }, []);
 
     useEffect(() => {
-        const token = localStorage.getItem('auth_token');
+        const token = localStorage.getItem('auth_token'); // Corrected
         if (!token) {
             navigate('/');
             return;
@@ -54,7 +61,8 @@ export default function ProfilePage() {
         }
         setDeleting(true);
         try {
-            const response = await apiService.deleteProfile(); // Hits DELETE /api/profile/delete
+            // apiService.deleteProfile() now hits DELETE /api/profile/saved
+            const response = await apiService.deleteProfile();
             alert(response.message || 'Profile deleted successfully!');
             navigate('/');
         } catch (err) {
@@ -87,7 +95,7 @@ export default function ProfilePage() {
         return (
             <div className="container info-message-container">
                 <div className="info-message">No profile data is available to display.</div>
-                <button onClick={() => navigate('/generate')} className="primary-button" style={{ marginRight: '10px' }}>
+                 <button onClick={() => navigate('/generate')} className="primary-button" style={{ marginRight: '10px' }}>
                     Generate Profile
                 </button>
                 <button onClick={() => navigate('/')} className="secondary-button">

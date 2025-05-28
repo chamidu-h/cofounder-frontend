@@ -1,30 +1,25 @@
 // src/pages/Home.js
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import apiService from '../services/apiService'; // USE THIS
+import apiService from '../services/apiService';
 
 export default function Home() {
     const [includePrivate, setIncludePrivate] = useState(false);
-    const [user, setUser] = useState(null); // Holds { user, generationCount, hasSavedProfile, canGenerate }
+    const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     const checkAuthStatus = useCallback(async () => {
         setLoading(true);
-        const token = localStorage.getItem('auth_token');
+        const token = localStorage.getItem('auth_token'); // Corrected
         if (token) {
             try {
                 const userDataFromApi = await apiService.getUser();
                 setUser(userDataFromApi);
             } catch (error) {
                 console.error('Home: Auth check failed:', error.message);
-                // Token might be invalid/expired, apiService interceptor should handle removal.
-                // We ensure user state is cleared here.
-                setUser(null);
-                if (!error.response || (error.response.status !== 401 && error.response.status !== 403)) {
-                  // Only alert if it's not an auth error handled by interceptor (which redirects)
-                  // alert("Could not verify your session. Please try logging in again.");
-                }
+                setUser(null); // Clear user if auth fails
+                // apiService interceptor handles token removal and redirect for 401/403
             }
         } else {
             setUser(null);
@@ -39,7 +34,7 @@ export default function Home() {
     useEffect(() => {
         const handleFocusOrLogin = () => checkAuthStatus();
         window.addEventListener('focus', handleFocusOrLogin);
-        window.addEventListener('loggedIn', handleFocusOrLogin); // Listen for custom event from OAuthCallback
+        window.addEventListener('loggedIn', handleFocusOrLogin);
 
         return () => {
             window.removeEventListener('focus', handleFocusOrLogin);
@@ -61,9 +56,8 @@ export default function Home() {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem('auth_token');
+        localStorage.removeItem('auth_token'); // Corrected
         setUser(null);
-        // No navigation needed as we are on the home page, it will re-render.
     };
 
     if (loading) {

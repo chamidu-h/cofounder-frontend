@@ -2,35 +2,34 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import apiService from '../services/apiService';
-import ProfileHeader from '../components/ProfileHeader';
+import ProfileHeader from '../components/ProfileHeader'; // Assuming these components exist
 import Overview from '../components/Overview';
 import TagList from '../components/TagList';
 import ProjectInsights from '../components/ProjectInsights';
 import LanguageStats from '../components/LanguageStats';
 
 export default function ProfileGeneration() {
-    const [profile, setProfile] = useState(null); // { personal, technical }
-    const [loading, setLoading] = useState(true); // For initial generation
+    const [profile, setProfile] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    const [user, setUser] = useState(null); // { user, generationCount, canGenerate, hasSavedProfile }
+    const [user, setUser] = useState(null);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
     const performProfileGeneration = useCallback(async (currentUserData) => {
-        setLoading(true); // Indicate loading for generation specifically
+        setLoading(true);
         setError(null);
         try {
             const generatedData = await apiService.generateProfile();
             if (generatedData && generatedData.profile) {
                 setProfile(generatedData.profile);
-                // Update user state with new generation count from backend if provided
                 setUser(prevUser => ({
-                    ...prevUser, // Keep existing user details
+                    ...prevUser,
                     generationCount: generatedData.newGenerationCount !== undefined 
                                      ? generatedData.newGenerationCount 
-                                     : (prevUser ? prevUser.generationCount + 1 : 1), // Fallback increment
+                                     : (prevUser ? prevUser.generationCount + 1 : 1),
                     canGenerate: generatedData.newGenerationCount !== undefined
-                                 ? generatedData.newGenerationCount < 3 // Assuming limit is 3
+                                 ? generatedData.newGenerationCount < 3
                                  : (currentUserData.generationCount + 1 < 3),
                     hasSavedProfile: generatedData.autoSaved ? true : (prevUser ? prevUser.hasSavedProfile : false)
                 }));
@@ -48,22 +47,18 @@ export default function ProfileGeneration() {
         }
     }, []);
 
-
     const fetchUserDataAndGenerate = useCallback(async () => {
         setLoading(true);
         setError(null);
         try {
             const userDataFromApi = await apiService.getUser();
             setUser(userDataFromApi);
-
             if (!userDataFromApi || !userDataFromApi.canGenerate) {
                 setError(userDataFromApi ? 'Generation limit reached or you are not allowed to generate.' : 'Could not fetch user data.');
                 setLoading(false);
                 return;
             }
-            // If user can generate, proceed
             await performProfileGeneration(userDataFromApi);
-
         } catch (err) {
             console.error('ProfileGeneration: Initial fetch/generate error:', err);
             setError(err.message || 'An error occurred.');
@@ -71,9 +66,8 @@ export default function ProfileGeneration() {
         }
     }, [performProfileGeneration]);
 
-
     useEffect(() => {
-        const token = localStorage.getItem('auth_token');
+        const token = localStorage.getItem('auth_token'); // Corrected
         if (!token) {
             navigate('/');
             return;
@@ -88,11 +82,10 @@ export default function ProfileGeneration() {
         }
         setSaving(true);
         try {
-            // apiService.saveProfile expects the profile data and will wrap it as { profileData: profile }
-            await apiService.saveProfile(profile);
+            await apiService.saveProfile(profile); // apiService now handles wrapping with {profileData: profile}
             alert(user?.hasSavedProfile ? 'Profile updated successfully!' : 'Profile saved successfully!');
             setUser(prevUser => ({ ...prevUser, hasSavedProfile: true }));
-            navigate('/profile');
+            navigate('/profile'); // Navigate to the main profile display page
         } catch (err) {
             console.error('ProfileGeneration: Save error:', err);
             alert(err.message || 'Failed to save profile.');
@@ -103,13 +96,13 @@ export default function ProfileGeneration() {
 
     const handleRegenerate = () => {
         if (user && user.canGenerate) {
-            performProfileGeneration(user); // Pass current user data for context
+            performProfileGeneration(user);
         } else {
             alert("Cannot generate again. Limit reached or error fetching user status.");
         }
     };
 
-    if (loading && !profile) { // Show initial loading spinner only if no profile is yet displayed
+    if (loading && !profile) {
         return <div className="container"><div className="loading">Generating your co-founder profile...</div></div>;
     }
 
@@ -124,7 +117,6 @@ export default function ProfileGeneration() {
     }
 
     if (!profile) {
-        // This state might be reached if initial generation failed but didn't set an error, or if user navigates here directly.
         return (
             <div className="container info-message-container">
                 <div className="info-message">Profile data is not available. Try generating again or go home.</div>
@@ -144,7 +136,7 @@ export default function ProfileGeneration() {
             <div className="container error-container">
                 <div className="error-message">Generated profile data is incomplete. Please try generating again.</div>
                 <button onClick={handleRegenerate} className="primary-button" disabled={loading} style={{marginRight: '10px'}}>
-                        {loading ? 'Generating...' : 'Try Generate Again'}
+                    {loading ? 'Generating...' : 'Try Generate Again'}
                 </button>
                 <button onClick={() => navigate('/')} className="secondary-button">Back to Home</button>
             </div>
