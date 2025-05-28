@@ -60,10 +60,15 @@ class ApiService {
     }
 
     async getSavedProfile() {
-        // Aligned to match backend route: GET /api/profile/saved
-        const response = await this.api.get('/profile/saved');
-        return response.data;
-    }
+    const response = await this.api.get('/profile/saved', {
+        headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate', // Tells server/proxies not to cache
+            'Pragma': 'no-cache', // For older HTTP/1.0 proxies
+            'Expires': '0' // Proxies should always revalidate
+        }
+    });
+    return response.data; // Expects 200 OK with full body now
+}
 
     async deleteProfile() {
         // Aligned to match backend route: DELETE /api/profile/saved
