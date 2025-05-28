@@ -1,25 +1,19 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import OAuthCallback from './pages/OAuthCallback';
+import ProfilePage from './pages/ProfilePage';
+import ProfileGeneration from './pages/ProfileGeneration'; // ADDED: Missing import
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    return (
+        <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/auth/callback" element={<OAuthCallback />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/generate" element={<ProfileGeneration />} /> {/* ADDED: Missing route */}
+        </Routes>
+    );
 }
 
 export default App;
