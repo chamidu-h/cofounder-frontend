@@ -4,22 +4,21 @@ import { useNavigate } from 'react-router-dom';
 import apiService from '../services/apiService';
 
 export default function Home() {
-    const [includePrivate, setIncludePrivate] = useState(false);
+    const [includePrivate, setIncludePrivate] = useState(false); // Default to false
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     const checkAuthStatus = useCallback(async () => {
         setLoading(true);
-        const token = localStorage.getItem('auth_token'); // Corrected
+        const token = localStorage.getItem('auth_token');
         if (token) {
             try {
                 const userDataFromApi = await apiService.getUser();
                 setUser(userDataFromApi);
             } catch (error) {
                 console.error('Home: Auth check failed:', error.message);
-                setUser(null); // Clear user if auth fails
-                // apiService interceptor handles token removal and redirect for 401/403
+                setUser(null);
             }
         } else {
             setUser(null);
@@ -43,20 +42,20 @@ export default function Home() {
     }, [checkAuthStatus]);
 
     const handleGenerateOrLogin = () => {
-        if (user) {
+        if (user) { // This part is for when the user is already logged in.
             if (user.canGenerate) {
                 navigate('/generate');
             } else {
                 alert('You have reached the maximum of 3 profile generations.');
             }
-        } else {
+        } else { // This is for when the user is NOT logged in (auth-section is shown)
             const githubAuthUrl = apiService.getGithubAuthUrl(includePrivate);
             window.location.href = githubAuthUrl;
         }
     };
 
     const handleLogout = () => {
-        localStorage.removeItem('auth_token'); // Corrected
+        localStorage.removeItem('auth_token');
         setUser(null);
     };
 
@@ -66,8 +65,11 @@ export default function Home() {
 
     return (
         <div className="container">
-            <h1>Cofounder Profile Generator</h1>
+            {/* The h1 was previously not given a class, adding page-title for consistency with CSS */}
+            <h1 className="page-title">Cofounder Profile Generator</h1> 
+            
             {user ? (
+                // Logged-in user view
                 <div className="user-section">
                     <div className="user-info">
                         {user.user && user.user.avatar_url && (
@@ -102,18 +104,19 @@ export default function Home() {
                     </div>
                 </div>
             ) : (
+                // Not logged-in view (Login Page) - CORRECTED ORDER
                 <div className="auth-section">
-                    <label>
+                    <button onClick={handleGenerateOrLogin} className="auth-login-button">
+                        Login with GitHub & Generate Profile
+                    </button>
+                    <label className="auth-checkbox-label">
                         <input
                             type="checkbox"
                             checked={includePrivate}
                             onChange={() => setIncludePrivate(p => !p)}
                         />
-                        Include private repositories data for profile generation
+                        Include private repositories data (optional)
                     </label>
-                    <button onClick={handleGenerateOrLogin} className="primary-button">
-                        Login with GitHub & Generate Profile
-                    </button>
                 </div>
             )}
         </div>
