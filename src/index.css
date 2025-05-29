@@ -6,7 +6,7 @@
 :root {
   /* 2. Color palette */
   --color-bg: linear-gradient(135deg, #f4f7fa 0%, #e0e7ff 100%);
-  --color-surface: rgba(255,255,255,0.85);
+  --color-surface: rgba(255,255,255,0.85); /* Used for cards/sections */
   --color-primary: #4f46e5;
   --color-primary-light: #eef2ff;
   --color-secondary: #6366f1;
@@ -15,7 +15,7 @@
   --color-text-muted: #6b7280;
   --color-border: #e5e7eb;
   --color-tag-bg: #f1f5f9;
-  --color-glass: rgba(255,255,255,0.65);
+  --color-glass: rgba(255,255,255,0.65); /* For loading/error messages */
 
   --radius: 1.25rem;
   --radius-sm: 0.75rem;
@@ -42,8 +42,8 @@ body {
 .container {
   max-width: 900px;
   margin: var(--spacing) auto;
-  padding: var(--spacing);
-  backdrop-filter: blur(2px);
+  padding: var(--spacing); /* Main container padding */
+  /* backdrop-filter: blur(2px); Removed as it might not be intended for the whole container */
 }
 
 /* 4. Headings */
@@ -52,12 +52,14 @@ h1, h2, h3, h4 {
   margin-bottom: 0.5rem;
   letter-spacing: -0.01em;
 }
-h1 {
+h1 { /* Main page title style */
   font-size: 2.5rem;
   font-weight: 800;
   background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  /* text-align: center; /* Optional: center the main H1 if desired */
+  /* margin-bottom: var(--spacing); /* Optional: space below main H1 */
 }
 h2 {
   font-size: 1.75rem;
@@ -68,8 +70,8 @@ h3 {
   font-weight: 600;
 }
 
-/* 5. Profile Header */
-.profile-header {
+/* 5. Profile Header (Avatar, Name, GitHub Link, Headline) */
+.profile-header { /* This styles the card with avatar, name, etc. */
   display: flex;
   align-items: center;
   background: var(--color-surface);
@@ -102,11 +104,9 @@ h3 {
 .avatar:hover {
   box-shadow: 0 4px 32px rgba(79,70,229,0.18);
 }
-.profile-header div > h2 { /* Targets h2 directly inside the div for name */
+.profile-header div > h2 { 
   margin-bottom: 0.25rem;
 }
-
-/* ENHANCED GITHUB PROFILE LINK STYLES */
 .profile-header .github-profile-link {
   display: inline-flex; 
   align-items: center;
@@ -123,7 +123,6 @@ h3 {
   transition: background-color var(--transition), color var(--transition), box-shadow var(--transition), transform var(--transition);
   box-shadow: 0 1px 3px rgba(6, 182, 212, 0.1); 
 }
-
 .profile-header .github-profile-link:hover {
   background-color: var(--color-accent); 
   color: white; 
@@ -131,17 +130,44 @@ h3 {
   box-shadow: 0 3px 8px rgba(6, 182, 212, 0.2);
   transform: translateY(-1px); 
 }
-/* END OF GITHUB PROFILE LINK STYLES */
-
 .profile-header .headline {
   color: var(--color-secondary);
   font-style: italic;
-  margin-top: 0.5rem; /* Adjusted for space below GitHub link */
+  margin-top: 0.5rem; 
   font-size: 1.05rem;
   opacity: 0.85;
 }
 
-/* 6. Sections */
+/* MODIFIED: Header section for Profile Page Title and Action Buttons */
+.profile-header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: calc(var(--spacing) * 1.5); /* Added margin-top for spacing from elements above */
+    margin-bottom: calc(var(--spacing) * 1.5); /* Adjusted margin-bottom for spacing to elements below */
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 0 var(--spacing); /* Add horizontal padding to align with container if needed, or remove if .container handles it */
+
+    /* Removed background, box-shadow, border, explicit padding for the box itself */
+}
+.profile-header-section h1 { /* Specific styling for H1 in this section */
+  margin-bottom: 0; /* Remove bottom margin if buttons are on the same line */
+  /* The global H1 style (gradient text) will still apply */
+}
+@media (max-width: 768px) {
+    .profile-header-section {
+        flex-direction: column;
+        align-items: flex-start; /* Align items to the start when stacked */
+    }
+    .profile-header-section h1 {
+        margin-bottom: var(--spacing); /* Add space below H1 when buttons stack */
+    }
+}
+/* END OF MODIFIED .profile-header-section */
+
+
+/* 6. General Sections (for content cards like Overview, Key Strengths etc.) */
 section {
   background: var(--color-surface);
   padding: calc(var(--spacing) * 1.1);
@@ -235,8 +261,8 @@ section:hover {
   border: none;
 }
 
-/* 10. Loading & Error */
-.loading, .error {
+/* 10. Loading & Error Messages */
+.loading, .error-message, .info-message { /* Consolidated similar styles */
   text-align: center;
   padding: 2rem;
   font-size: 1.15rem;
@@ -244,64 +270,92 @@ section:hover {
   background: var(--color-glass);
   border-radius: var(--radius-sm);
   box-shadow: 0 1px 8px rgba(99,102,241,0.06);
-  margin: 1.5rem 0;
+  margin: 1.5rem auto; /* Center messages if they are standalone */
+  max-width: 600px; /* Give messages a max width */
 }
-.error { /* This is for error messages, not the delete button */
+.error-message { /* Specifically for error messages that used .error class */
   color: #dc2626; 
   background: rgba(255, 235, 238, 0.85);
   border: 1px solid #dc2626;
 }
+.info-message { /* For informational messages like 'no profile found' */
+  /* Can have slightly different styling if needed, e.g., different border or background */
+  border: 1px solid var(--color-border);
+}
 
-/* 11. Homepage specific styles */
-.container > label {
+/* Button container for messages, centers buttons below messages */
+.error-container, .info-message-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem; /* Space between message and buttons, and between buttons */
+}
+.error-container button, .info-message-container button {
+    min-width: 180px; /* Give buttons a decent minimum width */
+}
+
+
+/* 11. Homepage specific styles (Auth Section / Login) */
+.auth-section { /* Styles for the initial login/options area on Home.js */
+    background: var(--color-surface);
+    padding: calc(var(--spacing) * 1.5);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin: calc(var(--spacing) * 2) auto; /* More prominent margin */
+    max-width: 500px; /* Constrain width of login box */
+    text-align: center;
+}
+.auth-section label { /* Styles the "Include private repos" label */
   display: flex;
   align-items: center;
-  font-weight: 600;
+  justify-content: center; /* Center label content */
+  font-weight: 500; /* Adjusted weight */
   color: var(--color-text);
-  margin: calc(var(--spacing) * 1.2) 0;
-  font-size: 1.1rem;
+  margin-bottom: calc(var(--spacing) * 1.2);
+  font-size: 1rem; /* Adjusted size */
   cursor: pointer;
   user-select: none;
   gap: 0.75rem;
 }
-.container > label input[type="checkbox"] {
-  width: 20px;
-  height: 20px;
+.auth-section label input[type="checkbox"] {
+  width: 18px; /* Adjusted size */
+  height: 18px;
   cursor: pointer;
   accent-color: var(--color-primary);
   border-radius: 4px;
   border: 1.5px solid var(--color-border);
   transition: border-color var(--transition), background-color var(--transition);
 }
-.container > button { /* This styles the main button on the homepage */
+.auth-section button { /* Styles the "Login with GitHub & Generate Profile" button */
   background: var(--color-primary);
   color: white;
   font-weight: 700;
   font-size: 1.1rem;
-  padding: 0.75rem 1.8rem;
+  padding: 0.85rem 2rem; /* Adjusted padding */
   border: none;
   border-radius: var(--radius);
   box-shadow: 0 6px 18px rgba(79, 70, 229, 0.3);
   cursor: pointer;
   transition: background-color var(--transition), box-shadow var(--transition), transform var(--transition);
   user-select: none;
-  margin-top: var(--spacing);
   display: inline-block;
   letter-spacing: 0.02em;
+  width: auto; /* Don't make it full width unless on mobile */
 }
-.container > button:hover {
+.auth-section button:hover {
   background: var(--color-accent);
   box-shadow: 0 10px 28px rgba(6, 182, 212, 0.4);
   transform: translateY(-2px);
 }
-.container > button:active {
+.auth-section button:active {
   transform: translateY(0);
   box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
 }
 
-/* 12. Responsive tweaks */
+
+/* 12. Responsive tweaks for general layout */
 @media (max-width: 600px) {
-  .profile-header {
+  .profile-header { /* Avatar and name section */
     flex-direction: column;
     align-items: flex-start;
     padding: var(--spacing);
@@ -310,26 +364,28 @@ section:hover {
     margin-bottom: var(--spacing);
     margin-right: 0;
   }
-  .container {
-    padding: 0.5rem;
+  .container { /* Main page container */
+    padding: var(--spacing); /* Ensure consistent padding on mobile */
   }
-  section {
+  section { /* General content cards */
     padding: var(--spacing);
   }
-  .projects {
+  .projects { /* Project insight cards */
     grid-template-columns: 1fr;
     gap: var(--spacing);
   }
-  .container > label {
-    font-size: 1rem;
+  .auth-section label {
+    font-size: 0.95rem; /* Slightly smaller label on mobile */
+    flex-direction: column; /* Stack checkbox and text */
+    gap: 0.5rem;
   }
-  .container > button {
-    width: 100%;
-    padding: 0.85rem 0;
+  .auth-section button {
+    width: 100%; /* Full width login button on mobile */
+    padding: 0.9rem 0;
   }
 }
 
-/* User section styles (Homepage) */
+/* User section styles (Homepage - when logged in) */
 .user-section {
     background: var(--color-surface);
     padding: calc(var(--spacing) * 1.2);
@@ -341,13 +397,15 @@ section:hover {
     display: flex;
     align-items: center;
     margin-bottom: var(--spacing);
+    gap: var(--spacing); /* Gap between avatar and text */
 }
 .user-avatar {
     width: 64px;
     height: 64px;
     border-radius: 50%;
-    margin-right: var(--spacing);
+    /* margin-right: var(--spacing); Removed, using gap on parent */
     border: 2px solid var(--color-primary);
+    flex-shrink: 0; /* Prevent avatar from shrinking */
 }
 .saved-indicator {
     color: var(--color-accent);
@@ -355,30 +413,37 @@ section:hover {
     margin: 0.25rem 0;
 }
 
-/* General Button Group Styles (used in Home.js and ProfilePage.js actions) */
+/* General Button Group Styles (used in Home.js user-section and ProfilePage.js profile-actions) */
 .action-buttons, .profile-actions {
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
+    margin-top: var(--spacing); /* Add some top margin to separate from content above */
 }
+.profile-actions { /* Specifically for the buttons next to "Your Co-founder Profile" */
+    margin-top: 0; /* No top margin if they are on the same line as the title */
+}
+
 
 /* Base styles for all action buttons */
 .primary-button, .secondary-button, .delete-button, .logout-button, .disabled-button {
     padding: 0.75rem 1.5rem;
     border-radius: var(--radius-sm);
     font-weight: 600;
-    font-size: 0.95rem; /* Consistent font size for action buttons */
+    font-size: 0.95rem; 
     cursor: pointer;
     transition: all var(--transition);
-    border: 1.5px solid transparent; /* Base border, can be overridden */
-    line-height: 1.2; /* Ensure text is centered well */
+    border: 1.5px solid transparent; 
+    line-height: 1.2; 
     text-align: center;
+    flex-grow: 1; /* Allow buttons to grow if space allows (for fewer buttons) */
+    min-width: 160px; /* Minimum width for buttons */
 }
 
 .primary-button {
     background: var(--color-primary);
     color: white;
-    border-color: var(--color-primary); /* Match border to background */
+    border-color: var(--color-primary); 
 }
 .primary-button:hover {
     background: var(--color-secondary);
@@ -400,7 +465,6 @@ section:hover {
     box-shadow: 0 2px 8px rgba(79, 70, 229, 0.1);
 }
 
-/* Transformed .delete-button */
 .delete-button {
     background: transparent;        
     color: #dc2626;               
@@ -428,40 +492,28 @@ section:hover {
 }
 
 .disabled-button {
-    background: var(--color-tag-bg); /* Lighter than border for disabled state */
+    background: var(--color-tag-bg); 
     color: var(--color-text-muted);
     border-color: var(--color-border);
     cursor: not-allowed;
     opacity: 0.7;
 }
 
-/* Header section for Profile Pages */
-.profile-header-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--spacing);
-    flex-wrap: wrap;
-    gap: 1rem;
-}
-
-/* Responsive adjustments for button groups */
+/* Responsive adjustments for action button groups */
 @media (max-width: 768px) {
-    .profile-header-section {
-        flex-direction: column;
-        align-items: flex-start;
-    }
+    /* .profile-header-section already handles stacking for title and .profile-actions */
     
-    .action-buttons,
-    .profile-actions {
+    .action-buttons, /* For Home page user section */
+    .profile-actions { /* For ProfilePage header section */
         flex-direction: column;
         width: 100%;
     }
     
-    .action-buttons button, /* Targets buttons directly inside .action-buttons */
-    .profile-actions button { /* Targets buttons directly inside .profile-actions */
+    .action-buttons button, 
+    .profile-actions button { 
         width: 100%;
-        margin-bottom: 0.5rem; /* Add some space between stacked buttons */
+        margin-bottom: 0.5rem; 
+        flex-grow: 0; /* Prevent growing when stacked */
     }
     .action-buttons button:last-child,
     .profile-actions button:last-child {
@@ -469,8 +521,8 @@ section:hover {
     }
 }
 
-/* Additional styling for specific page containers if needed */
-.profile-page-container .section-block { /* Class for sections like experience, actions */
+/* Styling for section-blocks within Profile Pages (e.g., Experience, Action buttons at bottom) */
+.profile-page-container .section-block { 
   margin-top: var(--spacing);
   padding: var(--spacing);
   background: var(--color-surface);
@@ -483,6 +535,7 @@ section:hover {
   color: var(--color-secondary);
 }
 
+/* Styling for Generation Page Header */
 .generation-header {
     display: flex;
     justify-content: space-between;
@@ -500,4 +553,8 @@ section:hover {
 }
 .generation-header .generation-info span {
     font-weight: 500;
+}
+.generation-header .secondary-button { /* Specific styling for "Generate Again" if needed */
+    padding: 0.5rem 1rem; /* Make it a bit smaller */
+    font-size: 0.9rem;
 }
