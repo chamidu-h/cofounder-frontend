@@ -379,10 +379,18 @@ section:hover {
     border: 2px solid var(--color-primary);
 }
 
+/* Transformed .delete-button */
 .delete-button {
-  background-color: transparent;       /* Remove solid background fill */
-  color: #dc2626;                      /* Set text color to red */
-  border: 2px solid #dc2626;
+    background: transparent;         /* No background fill */
+    color: #dc2626;                /* Red text */
+    border: 1.75px solid #dc2626;   /* Red border */
+    box-shadow: 0 2px 6px rgba(220, 38, 38, 0.15); /* Subtle red shadow */
+}
+
+.delete-button:hover {
+    background: rgba(220, 38, 38, 0.08); /* very slight red tint on hover */
+}
+
 
 .logout-button {
     background: transparent;
@@ -428,4 +436,3 @@ section:hover {
         width: 100%;
     }
 }
-
