@@ -1,6 +1,3 @@
-/* src/index.css - Add these new styles to the existing CSS */
-
-/* Add to src/index.css */
 /* src/index.css */
 
 /* 1. Import a modern sans-serif font */
@@ -105,24 +102,41 @@ h3 {
 .avatar:hover {
   box-shadow: 0 4px 32px rgba(79,70,229,0.18);
 }
-.profile-header div > h2 {
+.profile-header div > h2 { /* Targets h2 directly inside the div for name */
   margin-bottom: 0.25rem;
 }
-.profile-header a {
-  color: var(--color-primary);
-  text-decoration: none;
-  font-weight: 600;
-  border-bottom: 1.5px solid var(--color-primary);
-  transition: color var(--transition), border-color var(--transition);
+
+/* ENHANCED GITHUB PROFILE LINK STYLES */
+.profile-header .github-profile-link {
+  display: inline-flex; 
+  align-items: center;
+  padding: 0.4rem 0.9rem; 
+  border-radius: var(--radius-sm); 
+  background: transparent;
+  border: 1.5px solid var(--color-accent); 
+  color: var(--color-accent); 
+  font-weight: 500; 
+  font-size: 0.9rem; 
+  text-decoration: none; 
+  margin-top: 0.35rem; 
+  margin-bottom: 0.35rem; 
+  transition: background-color var(--transition), color var(--transition), box-shadow var(--transition), transform var(--transition);
+  box-shadow: 0 1px 3px rgba(6, 182, 212, 0.1); 
 }
-.profile-header a:hover {
-  color: var(--color-accent);
-  border-color: var(--color-accent);
+
+.profile-header .github-profile-link:hover {
+  background-color: var(--color-accent); 
+  color: white; 
+  border-color: var(--color-accent); 
+  box-shadow: 0 3px 8px rgba(6, 182, 212, 0.2);
+  transform: translateY(-1px); 
 }
+/* END OF GITHUB PROFILE LINK STYLES */
+
 .profile-header .headline {
   color: var(--color-secondary);
   font-style: italic;
-  margin-top: 0.25rem;
+  margin-top: 0.5rem; /* Adjusted for space below GitHub link */
   font-size: 1.05rem;
   opacity: 0.85;
 }
@@ -232,15 +246,13 @@ section:hover {
   box-shadow: 0 1px 8px rgba(99,102,241,0.06);
   margin: 1.5rem 0;
 }
-.error {
-  color: #dc2626;
+.error { /* This is for error messages, not the delete button */
+  color: #dc2626; 
   background: rgba(255, 235, 238, 0.85);
   border: 1px solid #dc2626;
 }
 
 /* 11. Homepage specific styles */
-
-/* Style the label to align checkbox and text nicely */
 .container > label {
   display: flex;
   align-items: center;
@@ -252,8 +264,6 @@ section:hover {
   user-select: none;
   gap: 0.75rem;
 }
-
-/* Custom styled checkbox */
 .container > label input[type="checkbox"] {
   width: 20px;
   height: 20px;
@@ -263,9 +273,7 @@ section:hover {
   border: 1.5px solid var(--color-border);
   transition: border-color var(--transition), background-color var(--transition);
 }
-
-/* Button styling */
-.container > button {
+.container > button { /* This styles the main button on the homepage */
   background: var(--color-primary);
   color: white;
   font-weight: 700;
@@ -281,13 +289,11 @@ section:hover {
   display: inline-block;
   letter-spacing: 0.02em;
 }
-
 .container > button:hover {
   background: var(--color-accent);
   box-shadow: 0 10px 28px rgba(6, 182, 212, 0.4);
   transform: translateY(-2px);
 }
-
 .container > button:active {
   transform: translateY(0);
   box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
@@ -314,7 +320,6 @@ section:hover {
     grid-template-columns: 1fr;
     gap: var(--spacing);
   }
-  /* Homepage label and button responsive */
   .container > label {
     font-size: 1rem;
   }
@@ -324,7 +329,7 @@ section:hover {
   }
 }
 
-/* User section styles */
+/* User section styles (Homepage) */
 .user-section {
     background: var(--color-surface);
     padding: calc(var(--spacing) * 1.2);
@@ -332,13 +337,11 @@ section:hover {
     box-shadow: var(--shadow);
     margin-bottom: var(--spacing);
 }
-
 .user-info {
     display: flex;
     align-items: center;
     margin-bottom: var(--spacing);
 }
-
 .user-avatar {
     width: 64px;
     height: 64px;
@@ -346,64 +349,93 @@ section:hover {
     margin-right: var(--spacing);
     border: 2px solid var(--color-primary);
 }
-
 .saved-indicator {
     color: var(--color-accent);
     font-weight: 600;
     margin: 0.25rem 0;
 }
 
-.action-buttons {
+/* General Button Group Styles (used in Home.js and ProfilePage.js actions) */
+.action-buttons, .profile-actions {
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
 }
 
+/* Base styles for all action buttons */
 .primary-button, .secondary-button, .delete-button, .logout-button, .disabled-button {
     padding: 0.75rem 1.5rem;
     border-radius: var(--radius-sm);
     font-weight: 600;
+    font-size: 0.95rem; /* Consistent font size for action buttons */
     cursor: pointer;
     transition: all var(--transition);
-    border: none;
+    border: 1.5px solid transparent; /* Base border, can be overridden */
+    line-height: 1.2; /* Ensure text is centered well */
+    text-align: center;
 }
 
 .primary-button {
     background: var(--color-primary);
     color: white;
+    border-color: var(--color-primary); /* Match border to background */
+}
+.primary-button:hover {
+    background: var(--color-secondary);
+    border-color: var(--color-secondary);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.2);
 }
 
 .secondary-button {
     background: var(--color-surface);
     color: var(--color-primary);
-    border: 2px solid var(--color-primary);
+    border: 1.5px solid var(--color-primary);
+}
+.secondary-button:hover {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.1);
 }
 
 /* Transformed .delete-button */
 .delete-button {
-    background: transparent;         /* No background fill */
-    color: #dc2626;                /* Red text */
-    border: 1.75px solid #dc2626;   /* Red border */
-    box-shadow: 0 2px 6px rgba(220, 38, 38, 0.15); /* Subtle red shadow */
+    background: transparent;        
+    color: #dc2626;               
+    border: 1.5px solid #dc2626;  
+    box-shadow: 0 1px 3px rgba(220, 38, 38, 0.1); 
 }
-
 .delete-button:hover {
-    background: rgba(220, 38, 38, 0.08); /* very slight red tint on hover */
+    background: rgba(220, 38, 38, 0.08); 
+    color: #b91c1c; 
+    border-color: #b91c1c; 
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.2);
 }
-
 
 .logout-button {
     background: transparent;
     color: var(--color-text-muted);
-    border: 1px solid var(--color-border);
+    border: 1.5px solid var(--color-border);
+}
+.logout-button:hover {
+    background: var(--color-tag-bg);
+    border-color: var(--color-text-muted);
+    color: var(--color-text);
+    transform: translateY(-1px);
 }
 
 .disabled-button {
-    background: var(--color-border);
+    background: var(--color-tag-bg); /* Lighter than border for disabled state */
     color: var(--color-text-muted);
+    border-color: var(--color-border);
     cursor: not-allowed;
+    opacity: 0.7;
 }
 
+/* Header section for Profile Pages */
 .profile-header-section {
     display: flex;
     justify-content: space-between;
@@ -413,12 +445,7 @@ section:hover {
     gap: 1rem;
 }
 
-.profile-actions {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-}
-
+/* Responsive adjustments for button groups */
 @media (max-width: 768px) {
     .profile-header-section {
         flex-direction: column;
@@ -431,8 +458,46 @@ section:hover {
         width: 100%;
     }
     
-    .action-buttons button,
-    .profile-actions button {
+    .action-buttons button, /* Targets buttons directly inside .action-buttons */
+    .profile-actions button { /* Targets buttons directly inside .profile-actions */
         width: 100%;
+        margin-bottom: 0.5rem; /* Add some space between stacked buttons */
     }
+    .action-buttons button:last-child,
+    .profile-actions button:last-child {
+        margin-bottom: 0;
+    }
+}
+
+/* Additional styling for specific page containers if needed */
+.profile-page-container .section-block { /* Class for sections like experience, actions */
+  margin-top: var(--spacing);
+  padding: var(--spacing);
+  background: var(--color-surface);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
+
+.profile-page-container .experience strong {
+  color: var(--color-secondary);
+}
+
+.generation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing);
+    padding-bottom: var(--spacing);
+    border-bottom: 1px solid var(--color-border);
+}
+.generation-header .generation-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.95rem;
+    color: var(--color-text-muted);
+}
+.generation-header .generation-info span {
+    font-weight: 500;
 }
