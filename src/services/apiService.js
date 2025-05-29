@@ -12,7 +12,7 @@ class ApiService {
 
         this.api.interceptors.request.use(
             (config) => {
-                const token = localStorage.getItem('auth_token'); // Corrected
+                const token = localStorage.getItem('auth_token');
                 if (token) {
                     config.headers.Authorization = `Bearer ${token}`;
                 }
@@ -26,7 +26,7 @@ class ApiService {
             (error) => {
                 if (error.response && (error.response.status === 401 || error.response.status === 403)) {
                     console.warn('[ApiService] Auth error, removing token and redirecting:', error.response.status);
-                    localStorage.removeItem('auth_token'); // Corrected
+                    localStorage.removeItem('auth_token');
                     if (window.location.pathname !== '/') {
                         window.location.href = '/'; // Redirect to home
                     }
@@ -59,20 +59,67 @@ class ApiService {
         return response.data;
     }
 
-    async getSavedProfile() {
-    const response = await this.api.get('/profile/saved', {
-        headers: {
-            'Cache-Control': 'no-cache, no-store, must-revalidate', // Tells server/proxies not to cache
-            'Pragma': 'no-cache', // For older HTTP/1.0 proxies
-            'Expires': '0' // Proxies should always revalidate
-        }
-    });
-    return response.data; // Expects 200 OK with full body now
-}
+    async getSavedProfile() { // Fetches the current user's own saved profile
+        const response = await this.api.get('/profile/saved', { // Path based on your backend's profileRoutes.js
+            headers: {
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': '0'
+            }
+        });
+        // Expects backend to send { profile: { personal, technical } }
+        return response.data;
+    }
 
     async deleteProfile() {
-        // Aligned to match backend route: DELETE /api/profile/saved
-        const response = await this.api.delete('/profile/saved');
+        const response = await this.api.delete('/profile/saved'); // Path based on your backend's profileRoutes.js
+        return response.data;
+    }
+
+    // --- NEW Suggestion and Connection Methods ---
+    async getSuggestions() {
+        const response = await this.api.get('/profile/suggestions');
+        // Expects { suggestions: [{ user_id, github_username, ... , score }, ...] }
+        return response.data;
+    }
+
+    async sendConnectionRequest(addresseeId) {
+        // Calls POST /api/profile/connections/request
+        const response = await this.api.post('/profile/connections/request', { addresseeId });
+        return response.data;
+    }
+
+    async getPendingRequests() { // Incoming requests for the current user
+        // Calls GET /api/profile/connections/pending
+        const response = await this.api.get('/profile/connections/pending');
+        // Expects { pendingRequests: [{ id (connection_id), requester_id, requester_username, ... }, ...] }
+        return response.data;
+    }
+
+    async getSentRequests() { // Outgoing requests sent by the current user
+        // Calls GET /api/profile/connections/sent
+        const response = await this.api.get('/profile/connections/sent');
+        // Expects { sentRequests: [{ id (connection_id), addressee_id, addressee_username, ... }, ...] }
+        return response.data;
+    }
+
+    async acceptConnectionRequest(requesterId) {
+        // Calls POST /api/profile/connections/accept (no ID in path for MVP)
+        // Body will contain { requesterId: ID_OF_USER_WHO_SENT_REQUEST }
+        const response = await this.api.post('/profile/connections/accept', { requesterId });
+        return response.data;
+    }
+
+    async declineOrCancelRequest(connectionId) {
+        // Calls DELETE /api/profile/connections/:connectionId/decline
+        const response = await this.api.delete(`/profile/connections/${connectionId}/decline`);
+        return response.data;
+    }
+
+    async getActiveConnections() {
+        // Calls GET /api/profile/connections/active
+        const response = await this.api.get('/profile/connections/active');
+        // Expects { activeConnections: [{ id (user_id), github_username, ... }, ...] }
         return response.data;
     }
 }

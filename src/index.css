@@ -492,3 +492,108 @@ section:hover { box-shadow: 0 8px 32px rgba(99,102,241,0.10); border-color: var(
     padding: 0.5rem 1rem; 
     font-size: 0.9rem;
 }
+
+
+/* Styles for Suggestion/Connection Lists */
+.list-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing); /* Space between items */
+}
+
+.list-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing);
+    padding: var(--spacing);
+    background-color: var(--color-primary-light); /* Light background for items */
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.list-item-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover; /* Ensure avatar image covers the area */
+    border: 2px solid var(--color-accent);
+}
+
+.list-item-info {
+    flex-grow: 1; /* Allow info section to take available space */
+}
+
+.list-item-info strong {
+    color: var(--color-primary);
+    font-size: 1.1rem;
+}
+
+.list-item-headline {
+    font-size: 0.9em;
+    color: var(--color-text-muted);
+    font-style: italic;
+    margin: 0.2rem 0;
+}
+
+.list-item-details {
+    font-size: 0.85em;
+    color: var(--color-text-muted);
+    margin-top: 0.2rem;
+}
+
+.list-item-link {
+    font-size: 0.85em;
+    color: var(--color-accent);
+    text-decoration: none;
+    display: block; /* Make it block for easier clicking */
+    margin-top: 0.25rem;
+}
+.list-item-link:hover {
+    text-decoration: underline;
+}
+
+
+.list-item-action { /* For single action buttons like 'Connect' or 'Cancel Request' */
+    padding: 0.5rem 1rem !important; /* Override general button padding to make them smaller */
+    font-size: 0.85rem !important; /* Override general button font size */
+    min-width: 100px !important; /* Adjust min-width */
+    flex-grow: 0 !important; /* Don't let single buttons grow too much */
+}
+
+.list-item-actions-group { /* For groups like Accept/Decline */
+    display: flex;
+    gap: 0.5rem; /* Space between buttons in a group */
+}
+.list-item-actions-group .primary-button,
+.list-item-actions-group .delete-button {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.85rem !important;
+    min-width: auto !important; /* Allow to size based on content */
+    flex-grow: 0 !important;
+}
+
+/* Specific list item styling if needed */
+.suggestion-item {
+    /* Any specific styles for suggestion items */
+}
+.pending-request-item {
+    background-color: var(--color-surface); /* Slightly different background for emphasis */
+    border-left: 4px solid var(--color-accent);
+}
+.sent-request-item {
+    opacity: 0.85; /* Slightly faded for sent requests */
+}
+.active-connection-item {
+    border-left: 4px solid var(--color-primary);
+}
+
+/* Info message styling if used within sections */
+.section-block .info-message {
+    margin: 0; /* Remove default margin if inside a section block */
+    padding: var(--spacing);
+    text-align: left; /* Align left within the section */
+    max-width: none; /* Allow full width within section */
+    background-color: var(--color-tag-bg); /* Subtler background */
+    border: 1px dashed var(--color-border);
+}
