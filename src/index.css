@@ -597,3 +597,14 @@ section:hover { box-shadow: 0 8px 32px rgba(99,102,241,0.10); border-color: var(
     background-color: var(--color-tag-bg); /* Subtler background */
     border: 1px dashed var(--color-border);
 }
+
+.list-item-name-link {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-size: 1.1rem; /* Match existing strong tag or adjust */
+    font-weight: 600; /* Match existing strong tag or adjust */
+}
+.list-item-name-link:hover {
+    text-decoration: underline;
+    color: var(--color-accent);
+}

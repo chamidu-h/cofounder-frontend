@@ -1,6 +1,6 @@
 // src/pages/ProfilePage.js
 import React, { useEffect, useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,Link } from 'react-router-dom';
 import apiService from '../services/apiService';
 import ProfileHeader from '../components/ProfileHeader';
 import Overview from '../components/Overview';
@@ -13,12 +13,16 @@ const SuggestionItem = ({ suggestion, onConnect }) => (
     <div className="list-item suggestion-item">
         <img src={suggestion.github_avatar_url} alt={suggestion.github_username} className="list-item-avatar" />
         <div className="list-item-info">
-            <strong>{suggestion.github_username}</strong>
+            {/* UPDATED: Name is now a Link */}
+            <Link to={`/profile/view/${suggestion.user_id}`} className="list-item-name-link">
+                <strong>{suggestion.github_username}</strong>
+            </Link>
             {suggestion.headline && <p className="list-item-headline">{suggestion.headline}</p>}
             {suggestion.keyStrengths && suggestion.keyStrengths.length > 0 &&
                 <p className="list-item-details">Strengths: {suggestion.keyStrengths.join(', ')}</p>}
             <small>Match Score: {suggestion.score}</small>
         </div>
+        {/* "Connect" button logic remains the same or can be adapted based on connectionStatus */}
         <button onClick={() => onConnect(suggestion.user_id)} className="secondary-button list-item-action">Connect</button>
     </div>
 );

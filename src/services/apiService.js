@@ -83,6 +83,15 @@ class ApiService {
         return response.data;
     }
 
+    async getUserPublicProfile(userId) {
+    // Calls GET /api/profile/:userId
+    // No cache-busting headers needed here unless you find it becomes an issue.
+    // Typically, viewing someone else's profile can be cached for a short while by the browser.
+    const response = await this.api.get(`/profile/${userId}`);
+    // Expects { user: {user_id, github_username, ...}, profile: { personal, technical } }
+    return response.data;
+}
+
     async sendConnectionRequest(addresseeId) {
         // Calls POST /api/profile/connections/request
         const response = await this.api.post('/profile/connections/request', { addresseeId });
