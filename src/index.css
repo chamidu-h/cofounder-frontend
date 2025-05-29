@@ -51,13 +51,30 @@ h1, h2, h3, h4 {
   margin-bottom: 0.5rem;
   letter-spacing: -0.01em;
 }
-h1 { 
+
+/* UPDATED: Specific style for the main page title on Home.js */
+h1.page-title { 
   font-size: 2.5rem;
   font-weight: 800;
   background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  text-align: center; /* This centers the text */
+  margin-bottom: calc(var(--spacing) * 2); /* Increased bottom margin for more space before auth section */
+  margin-top: var(--spacing); /* Added some top margin if it's the first element */
 }
+
+/* H1 style for section headers (e.g., on ProfilePage.js within .profile-header-section) */
+.profile-header-section h1 { 
+  font-size: 2.2rem; /* Slightly smaller than main page title */
+  font-weight: 700; /* Slightly less bold */
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0; 
+  text-align: left; /* Default to left for section titles unless overridden */
+}
+
 h2 {
   font-size: 1.75rem;
   font-weight: 700;
@@ -135,7 +152,7 @@ h3 {
   opacity: 0.85;
 }
 
-/* === MODIFIED .profile-header-section === */
+/* MODIFIED: Header section for Profile Page Title and Action Buttons (No Box) */
 .profile-header-section {
     display: flex;
     justify-content: space-between;
@@ -144,17 +161,12 @@ h3 {
     margin-bottom: calc(var(--spacing) * 1.5); 
     flex-wrap: wrap;
     gap: 1rem;
-    /* Explicitly remove box-making properties */
-    background-color: transparent !important; /* Force transparent background */
-    padding: 0 !important; /* Remove all padding */
-    border: none !important; /* Remove all borders */
-    box-shadow: none !important; /* Remove all shadows */
-    border-radius: 0 !important; /* Remove border radius */
-}
-.profile-header-section h1 { 
-  margin-bottom: 0; 
-  /* If title needs horizontal padding when no box, add it here or to parent .container */
-  /* padding-left: var(--spacing); /* Example if needed */
+    padding: 0 var(--spacing); 
+    background-color: transparent !important; 
+    /* padding: 0 !important; /* Re-evaluating if this explicit padding:0 is needed vs container's */
+    border: none !important; 
+    box-shadow: none !important; 
+    border-radius: 0 !important; 
 }
 @media (max-width: 768px) {
     .profile-header-section {
@@ -163,108 +175,26 @@ h3 {
     }
     .profile-header-section h1 {
         margin-bottom: var(--spacing); 
-        /* width: 100%; /* Ensure h1 takes full width if needed */
-        /* text-align: left; /* Ensure title aligns left */
+        width: 100%; /* Make title full width when stacked */
+        text-align: left; /* Align to left when stacked, or center if preferred */
     }
-    /* .profile-actions might also need width: 100% here if not already handled by its own media query */
-}
-/* === END OF MODIFIED .profile-header-section === */
-
-/* 6. General Sections (for content cards like Overview, Key Strengths etc.) */
-section {
-  background: var(--color-surface);
-  padding: calc(var(--spacing) * 1.1);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  margin-bottom: var(--spacing);
-  border: 1px solid var(--color-border);
-  transition: box-shadow var(--transition), border-color var(--transition);
-  position: relative;
-  overflow: hidden;
-}
-section:hover {
-  box-shadow: 0 8px 32px rgba(99,102,241,0.10);
-  border-color: var(--color-primary-light);
 }
 
-/* 7. TagList */
-.tag-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.65rem;
-}
-.tag {
-  background: var(--color-tag-bg);
-  color: var(--color-text-muted);
-  padding: 0.45rem 1rem;
-  border-radius: var(--radius-sm);
-  font-size: 0.93rem;
-  font-weight: 500;
-  border: 1px solid var(--color-border);
-  box-shadow: 0 1px 2px rgba(99,102,241,0.04);
-  transition: background var(--transition), color var(--transition);
-}
-.tag:hover {
-  background: var(--color-primary-light);
-  color: var(--color-primary);
-}
+/* ... (Rest of your CSS: Sections, TagList, ProjectInsights, LanguageStats, etc.) ... */
+.tag-list { display: flex; flex-wrap: wrap; gap: 0.65rem; }
+.tag { background: var(--color-tag-bg); color: var(--color-text-muted); padding: 0.45rem 1rem; border-radius: var(--radius-sm); font-size: 0.93rem; font-weight: 500; border: 1px solid var(--color-border); box-shadow: 0 1px 2px rgba(99,102,241,0.04); transition: background var(--transition), color var(--transition); }
+.tag:hover { background: var(--color-primary-light); color: var(--color-primary); }
+.projects { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: calc(var(--spacing) * 1.1); }
+.project-card { background: linear-gradient(120deg, var(--color-primary-light) 70%, #fff 100%); padding: var(--spacing); border-radius: var(--radius-sm); transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition); border: 1.5px solid var(--color-border); box-shadow: 0 2px 8px rgba(99,102,241,0.06); position: relative; overflow: hidden; }
+.project-card::before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 80% 20%, var(--color-accent) 0%, transparent 70%); opacity: 0.09; pointer-events: none; }
+.project-card:hover { transform: translateY(-6px) scale(1.03); box-shadow: 0 8px 36px rgba(99,102,241,0.13); border-color: var(--color-primary); }
+.project-card h4 { margin-bottom: 0.5rem; color: var(--color-primary); font-weight: 700; }
+.language-stats { list-style: none; padding: 0; margin-top: 0.5rem; }
+.language-stats li { background: linear-gradient(90deg, var(--color-secondary) 65%, var(--color-accent) 100%); color: #fff; display: inline-block; margin: 0.25rem 0.6rem 0.25rem 0; padding: 0.4rem 0.9rem; border-radius: var(--radius-sm); font-size: 0.93rem; font-weight: 500; box-shadow: 0 1px 4px rgba(6,182,212,0.07); letter-spacing: 0.01em; border: none; }
+section { background: var(--color-surface); padding: calc(var(--spacing) * 1.1); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: var(--spacing); border: 1px solid var(--color-border); transition: box-shadow var(--transition), border-color var(--transition); position: relative; overflow: hidden; }
+section:hover { box-shadow: 0 8px 32px rgba(99,102,241,0.10); border-color: var(--color-primary-light); }
 
-/* 8. ProjectInsights */
-.projects {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: calc(var(--spacing) * 1.1);
-}
-.project-card {
-  background: linear-gradient(120deg, var(--color-primary-light) 70%, #fff 100%);
-  padding: var(--spacing);
-  border-radius: var(--radius-sm);
-  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
-  border: 1.5px solid var(--color-border);
-  box-shadow: 0 2px 8px rgba(99,102,241,0.06);
-  position: relative;
-  overflow: hidden;
-}
-.project-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 80% 20%, var(--color-accent) 0%, transparent 70%);
-  opacity: 0.09;
-  pointer-events: none;
-}
-.project-card:hover {
-  transform: translateY(-6px) scale(1.03);
-  box-shadow: 0 8px 36px rgba(99,102,241,0.13);
-  border-color: var(--color-primary);
-}
-.project-card h4 {
-  margin-bottom: 0.5rem;
-  color: var(--color-primary);
-  font-weight: 700;
-}
-
-/* 9. LanguageStats */
-.language-stats {
-  list-style: none;
-  padding: 0;
-  margin-top: 0.5rem;
-}
-.language-stats li {
-  background: linear-gradient(90deg, var(--color-secondary) 65%, var(--color-accent) 100%);
-  color: #fff;
-  display: inline-block;
-  margin: 0.25rem 0.6rem 0.25rem 0;
-  padding: 0.4rem 0.9rem;
-  border-radius: var(--radius-sm);
-  font-size: 0.93rem;
-  font-weight: 500;
-  box-shadow: 0 1px 4px rgba(6,182,212,0.07);
-  letter-spacing: 0.01em;
-  border: none;
-}
-
-/* 10. Loading & Error Messages */
+/* Loading & Error Messages */
 .loading, .error-message, .info-message { 
   text-align: center;
   padding: 2rem;
@@ -294,7 +224,7 @@ section:hover {
     min-width: 180px; 
 }
 
-/* === Auth Section Styles (Login on Home.js) === */
+/* Auth Section Styles (Login on Home.js) */
 .auth-section { 
     background: var(--color-surface);
     padding: calc(var(--spacing) * 1.8) calc(var(--spacing) * 1.5); 
@@ -307,7 +237,6 @@ section:hover {
     flex-direction: column; 
     align-items: center; 
 }
-
 .auth-section .auth-login-button { 
   background: var(--color-primary);
   color: white;
@@ -323,7 +252,7 @@ section:hover {
   display: inline-block; 
   letter-spacing: 0.02em;
   width: auto; 
-  margin-bottom: calc(var(--spacing) * 1.2); /* Space below the button, before the checkbox */
+  margin-bottom: calc(var(--spacing) * 1.2); 
 }
 .auth-section .auth-login-button:hover {
   background: var(--color-accent);
@@ -334,7 +263,6 @@ section:hover {
   transform: translateY(0) scale(1);
   box-shadow: 0 4px 15px rgba(6, 182, 212, 0.35);
 }
-
 .auth-section .auth-checkbox-label { 
   display: flex;
   align-items: center;
@@ -357,7 +285,7 @@ section:hover {
   margin-right: 0.25rem; 
 }
 
-/* 12. Responsive tweaks for general layout */
+/* Responsive tweaks for general layout */
 @media (max-width: 600px) {
   .profile-header { 
     flex-direction: column;
@@ -378,14 +306,15 @@ section:hover {
     grid-template-columns: 1fr;
     gap: var(--spacing);
   }
-  .auth-section label {
+  .auth-section label { /* Checkbox label on mobile */
     font-size: 0.95rem; 
-    flex-direction: column; 
-    gap: 0.5rem;
+    /* flex-direction: column; /* Not needed if already centered */
+    /* gap: 0.5rem; */
   }
-  .auth-section button {
+  .auth-section .auth-login-button { /* Login button on mobile */
     width: 100%; 
     padding: 0.9rem 0;
+    font-size: 1.1rem;
   }
 }
 
@@ -423,12 +352,14 @@ section:hover {
     flex-wrap: wrap;
     margin-top: var(--spacing); 
 }
-.profile-actions { /* Buttons next to "Your Co-founder Profile" title */
-    margin-top: 0; /* No top margin if they are on the same line as the title */
+.profile-actions { 
+    margin-top: 0; 
 }
 
 /* Base styles for all action buttons */
-.primary-button, .secondary-button, .delete-button, .logout-button, .disabled-button {
+.primary-button, .secondary-button, .delete-button, .logout-button, .disabled-button,
+.auth-section .auth-login-button 
+ {
     padding: 0.75rem 1.5rem;
     border-radius: var(--radius-sm);
     font-weight: 600;
@@ -507,7 +438,7 @@ section:hover {
         flex-direction: column;
         width: 100%;
     }
-    .action-buttons { /* For Home page user section, if it needs different stacking */
+    .action-buttons { 
         flex-direction: column;
         width: 100%;
     }
