@@ -18,7 +18,10 @@ const JobCard = ({ job, matchScore = null }) => {
                   Pass the raw description text from the database to our new
                   StructuredDescription component, which will handle all the formatting.
                 */}
-                <StructuredDescription rawText={job.description_html} />
+                <StructuredDescription
+                    rawText={job.description_html}
+                    jobTitle={job.job_title}
+                />
             </ExpandableContent>
 
             <a href={job.job_url} target="_blank" rel="noopener noreferrer" className="primary-button job-link-button">
