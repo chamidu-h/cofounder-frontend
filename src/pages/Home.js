@@ -108,10 +108,10 @@ export default function Home() {
                     {/* --- NEW: CAREER HUB - This section is ONLY shown to logged-in users --- */}
                     <section className="career-hub-section section-block">
                         <h2>Career Hub</h2>
-                        <p className="hub-description">Your gateway to professional growth. Upload your CV to find personalized job matches or explore our curated list of opportunities.</p>
+                        <p className="hub-description">Your career, supercharged by AI. Upload your resume to unlock a prioritized list of jobs where your skills give you the highest chance of getting hired.</p>
                         <div className="hub-actions">
                             <Link to="/matcher" className="primary-button hub-button">
-                                CV Job Matcher
+                                AI Job Finder
                             </Link>
                             <Link to="/jobs" className="secondary-button hub-button">
                                 Browse Job Board
