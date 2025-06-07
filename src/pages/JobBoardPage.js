@@ -23,13 +23,14 @@ const JobBoardPage = () => {
         fetchJobs();
     }, []);
 
+    // No changes are needed here. The component correctly uses the wrapper and passes animation styles.
     return (
-        <div className="container job-board-page-container"> {/* New class for grid targeting */}
+        <div className="container job-board-page-container">
             <div className="page-header-section">
                 <h1>Available Job Openings</h1>
                 <Link to="/matcher" className="primary-button">Match Your CV</Link>
             </div>
-            <div className="results-wrapper"> {/* New wrapper for visual grouping */}
+            <div className="results-wrapper">
                 {loading && <div className="loading">Loading jobs...</div>}
                 {error && <div className="error-message">{error}</div>}
                 {!loading && !error && (
