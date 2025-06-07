@@ -712,3 +712,42 @@ section:hover { box-shadow: 0 8px 32px rgba(99,102,241,0.10); border-color: var(
     display: block;
 }
 
+/* src/index.css */
+
+/* --- ADD THESE STYLES AT THE END OF YOUR FILE --- */
+
+.career-hub-section {
+    /* Add a top margin to create space from the user welcome block */
+    margin-top: calc(var(--spacing) * 2);
+    text-align: center;
+    /* Use a slightly different border to make it stand out as a special section */
+    border: 1.5px solid var(--color-primary-light);
+}
+
+.career-hub-section h2 {
+    font-size: 1.75rem;
+    color: var(--color-primary);
+}
+
+.career-hub-section .hub-description {
+    color: var(--color-text-muted);
+    max-width: 600px;
+    margin: 0.5rem auto 1.5rem auto;
+}
+
+.career-hub-section .hub-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap; /* Allows buttons to stack on smaller screens */
+}
+
+.career-hub-section .hub-button {
+    font-size: 1.05rem;
+    padding: 0.8rem 1.8rem;
+    text-decoration: none; /* Required for <Link> components */
+    min-width: 200px;
+    flex-grow: 0; /* Prevents buttons from stretching to fill space */
+}
+
+

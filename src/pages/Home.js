@@ -1,6 +1,6 @@
 // src/pages/Home.js
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom'; // Ensure Link is imported
 import apiService from '../services/apiService';
 
 export default function Home() {
@@ -65,46 +65,62 @@ export default function Home() {
 
     return (
         <div className="container">
-            {/* The h1 was previously not given a class, adding page-title for consistency with CSS */}
-            <h1 className="page-title">Cofounder Profile Generator</h1> 
-            
+            <h1 className="page-title">Cofounder Profile Generator</h1>
+
             {user ? (
-                // Logged-in user view
-                <div className="user-section">
-                    <div className="user-info">
-                        {user.user && user.user.avatar_url && (
-                           <img src={user.user.avatar_url} alt="Avatar" className="user-avatar" />
-                        )}
-                        <div>
-                            <h3>Welcome, {user.user?.username || 'User'}!</h3>
-                            <p>Generations used: {user.generationCount !== undefined ? user.generationCount : 'N/A'}/3</p>
-                            {user.hasSavedProfile && (
-                                <p className="saved-indicator">✓ You have a saved profile</p>
+                // --- LOGGED-IN USER VIEW ---
+                <>
+                    {/* --- Existing User Welcome Section (UNCHANGED) --- */}
+                    <div className="user-section section-block">
+                        <div className="user-info">
+                            {user.user && user.user.avatar_url && (
+                               <img src={user.user.avatar_url} alt="Avatar" className="user-avatar" />
                             )}
+                            <div>
+                                <h3>Welcome, {user.user?.username || 'User'}!</h3>
+                                <p>Generations used: {user.generationCount !== undefined ? user.generationCount : 'N/A'}/3</p>
+                                {user.hasSavedProfile && (
+                                    <p className="saved-indicator">✓ You have a saved profile</p>
+                                )}
+                            </div>
+                        </div>
+                        <div className="action-buttons">
+                            {user.canGenerate ? (
+                                <button onClick={() => navigate('/generate')} className="primary-button">
+                                    Generate New Profile
+                                </button>
+                            ) : (
+                                <button disabled className="disabled-button">
+                                    Generation Limit Reached
+                                </button>
+                            )}
+                            {user.hasSavedProfile && (
+                                <button onClick={() => navigate('/profile')} className="secondary-button">
+                                    Your Profile
+                                </button>
+                            )}
+                            <button onClick={handleLogout} className="logout-button">
+                                Logout
+                            </button>
                         </div>
                     </div>
-                    <div className="action-buttons">
-                        {user.canGenerate ? (
-                            <button onClick={() => navigate('/generate')} className="primary-button">
-                                Generate New Profile
-                            </button>
-                        ) : (
-                            <button disabled className="disabled-button">
-                                Generation Limit Reached
-                            </button>
-                        )}
-                        {user.hasSavedProfile && (
-                            <button onClick={() => navigate('/profile')} className="secondary-button">
-                                Your Profile
-                            </button>
-                        )}
-                        <button onClick={handleLogout} className="logout-button">
-                            Logout
-                        </button>
-                    </div>
-                </div>
+
+                    {/* --- NEW: CAREER HUB - This section is ONLY shown to logged-in users --- */}
+                    <section className="career-hub-section section-block">
+                        <h2>Career Hub</h2>
+                        <p className="hub-description">Your gateway to professional growth. Upload your CV to find personalized job matches or explore our curated list of opportunities.</p>
+                        <div className="hub-actions">
+                            <Link to="/matcher" className="primary-button hub-button">
+                                CV Job Matcher
+                            </Link>
+                            <Link to="/jobs" className="secondary-button hub-button">
+                                Browse Job Board
+                            </Link>
+                        </div>
+                    </section>
+                </>
             ) : (
-                // Not logged-in view (Login Page) - CORRECTED ORDER
+                // --- LOGGED-OUT VISITOR VIEW (UNCHANGED) ---
                 <div className="auth-section">
                     <button onClick={handleGenerateOrLogin} className="auth-login-button">
                         Login with GitHub & Generate Profile
