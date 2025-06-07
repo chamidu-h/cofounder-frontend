@@ -1,43 +1,37 @@
-/* src/index.css */
-/* 1. Import a modern sans-serif font */
+/* src/index.css - Performance-Optimized Version */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
-  /* 2. Color palette */
-  --color-bg: linear-gradient(135deg, #f4f7fa 0%, #e0e7ff 100%);
-  --color-surface: rgba(255,255,255,0.85); 
-  --color-primary: #4f46e5;
-  --color-primary-light: #eef2ff;
-  --color-primary-dark: #3730a3;
+  /* Enhanced color palette with better contrast */
+  --color-bg: #f8fafc;
+  --color-surface: rgba(255, 255, 255, 0.95);
+  --color-primary: #3b82f6;
+  --color-primary-light: #dbeafe;
+  --color-primary-dark: #1d4ed8;
   --color-secondary: #6366f1;
   --color-accent: #06b6d4;
-  --color-text: #1f2937;
-  --color-text-muted: #6b7280;
-  --color-border: #e5e7eb;
-  --color-tag-bg: #f1f5f9;
-  --color-glass: rgba(255,255,255,0.65); 
+  --color-text: #0f172a;
+  --color-text-muted: #64748b;
+  --color-border: #e2e8f0;
   --color-success: #10b981;
-  --color-warning: #f59e0b;
   --color-error: #ef4444;
   
-  /* Spacing and sizing */
-  --radius: 1.25rem;
-  --radius-sm: 0.75rem;
-  --spacing: 1.25rem;
+  /* Optimized shadows for better performance */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   
-  /* Enhanced shadows with multiple layers */
-  --shadow: 0 8px 24px rgba(80, 112, 255, 0.08), 0 1.5px 3px rgba(60, 72, 88, 0.08);
-  --shadow-hover: 0 12px 32px rgba(80, 112, 255, 0.12), 0 4px 8px rgba(60, 72, 88, 0.1);
-  --shadow-active: 0 4px 16px rgba(80, 112, 255, 0.1), 0 1px 2px rgba(60, 72, 88, 0.08);
+  /* Hardware-accelerated transitions */
+  --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   
-  /* Enhanced transitions with custom easing */
-  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-bounce: 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --radius: 12px;
+  --spacing: 20px;
 }
 
-/* 3. Global resets & typography */
+/* Force hardware acceleration */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -45,211 +39,114 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   background: var(--color-bg);
   color: var(--color-text);
-  line-height: 1.65;
-  min-height: 100vh;
-  letter-spacing: 0.01em;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Force hardware acceleration on body */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
 }
 
+/* Enhanced container with smooth entrance */
 .container {
   max-width: 900px;
-  margin: var(--spacing) auto;
+  margin: 0 auto;
   padding: var(--spacing);
-  animation: fadeInUp 0.6s ease-out;
+  /* Hardware acceleration */
+  transform: translate3d(0, 0, 0);
+  will-change: transform, opacity;
+  animation: slideInUp 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
 
-/* 4. Enhanced Animation Keyframes */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideInFromLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes slideInFromRight {
-  from {
-    opacity: 0;
-    transform: translateX(50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-}
-
-@keyframes shimmer {
+/* Smooth keyframe animations */
+@keyframes slideInUp {
   0% {
-    background-position: -200px 0;
+    opacity: 0;
+    transform: translate3d(0, 40px, 0);
   }
   100% {
-    background-position: calc(200px + 100%) 0;
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
   }
 }
 
-/* 5. Enhanced Headings */
-h1, h2, h3, h4 {
-  color: var(--color-text);
-  margin-bottom: 0.5rem;
-  letter-spacing: -0.01em;
-  transition: color var(--transition);
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-h1.page-title { 
-  font-size: clamp(2rem, 4vw, 2.5rem);
+@keyframes slideInLeft {
+  0% {
+    opacity: 0;
+    transform: translate3d(-30px, 0, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Enhanced page title */
+.page-title, h1.page-title {
+  font-size: clamp(2rem, 5vw, 3rem);
   font-weight: 800;
-  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
   text-align: center;
-  margin-bottom: calc(var(--spacing) * 2);
-  margin-top: var(--spacing);
-  animation: slideInFromLeft 0.8s ease-out;
+  margin: 2rem 0;
+  /* Hardware acceleration */
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+  animation: slideInLeft 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both;
 }
 
-.profile-header-section h1 { 
-  font-size: clamp(1.8rem, 3.5vw, 2.2rem);
-  font-weight: 700;
-  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-bottom: 0; 
-  text-align: left;
-  transition: transform var(--transition);
-}
-
-.profile-header-section h1:hover {
-  transform: translateY(-2px);
-}
-
-h2 {
-  font-size: clamp(1.5rem, 3vw, 1.75rem);
-  font-weight: 700;
-}
-
-h3 {
-  font-size: clamp(1.1rem, 2.5vw, 1.25rem);
-  font-weight: 600;
-}
-
-/* 6. Enhanced Page Header Section */
-.page-header-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid transparent;
-  background: linear-gradient(90deg, var(--color-border), transparent) bottom/100% 2px no-repeat;
-  animation: slideInFromRight 0.8s ease-out 0.2s both;
-  position: relative;
-}
-
-.page-header-section::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
-  animation: expandWidth 1s ease-out 0.5s both;
-}
-
-@keyframes expandWidth {
-  to {
-    width: 100%;
-  }
-}
-
-/* 7. Enhanced Section Styles */
-section, .section-block {
+/* Enhanced section blocks */
+.section-block, section {
   background: var(--color-surface);
-  padding: calc(var(--spacing) * 1.1);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  margin-bottom: var(--spacing);
   border: 1px solid var(--color-border);
-  transition: all var(--transition);
-  position: relative;
-  overflow: hidden;
-  backdrop-filter: blur(10px);
+  border-radius: var(--radius);
+  padding: calc(var(--spacing) * 1.2);
+  margin-bottom: var(--spacing);
+  box-shadow: var(--shadow);
+  /* Hardware acceleration */
+  transform: translate3d(0, 0, 0);
+  will-change: transform, box-shadow;
+  transition: var(--transition);
+  animation: fadeIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
 
-section::before, .section-block::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-  transition: left var(--transition-slow);
-  z-index: 1;
-}
-
-section:hover, .section-block:hover {
-  box-shadow: var(--shadow-hover);
+.section-block:hover, section:hover {
+  transform: translate3d(0, -4px, 0);
+  box-shadow: var(--shadow-lg);
   border-color: var(--color-primary-light);
-  transform: translateY(-4px);
 }
 
-section:hover::before, .section-block:hover::before {
-  left: 100%;
-}
-
-/* 8. Enhanced Job Card Styles */
+/* Enhanced job cards */
 .job-card {
-  background: linear-gradient(135deg, var(--color-surface) 0%, rgba(255,255,255,0.95) 100%);
-  border: 1.5px solid var(--color-border);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius);
   padding: var(--spacing);
   margin-bottom: var(--spacing);
-  transition: all var(--transition);
+  box-shadow: var(--shadow);
+  /* Hardware acceleration */
+  transform: translate3d(0, 0, 0);
+  will-change: transform, box-shadow;
+  transition: var(--transition);
   position: relative;
   overflow: hidden;
-  backdrop-filter: blur(8px);
-  animation: fadeInUp 0.6s ease-out;
 }
 
 .job-card::before {
@@ -259,20 +156,20 @@ section:hover::before, .section-block:hover::before {
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(circle at 80% 20%, var(--color-accent) 0%, transparent 70%);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
   opacity: 0;
   transition: opacity var(--transition);
   z-index: 1;
 }
 
 .job-card:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: var(--shadow-hover);
+  transform: translate3d(0, -6px, 0) scale(1.02);
+  box-shadow: var(--shadow-xl);
   border-color: var(--color-primary);
 }
 
 .job-card:hover::before {
-  opacity: 0.05;
+  opacity: 0.03;
 }
 
 .job-card > * {
@@ -280,20 +177,22 @@ section:hover::before, .section-block:hover::before {
   z-index: 2;
 }
 
+/* Enhanced job card header */
 .job-card-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: 1rem;
   margin-bottom: 1rem;
-  animation: slideInFromLeft 0.6s ease-out 0.1s both;
+  animation: slideInLeft 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.1s both;
 }
 
 .job-title {
   color: var(--color-primary);
-  margin-bottom: 0.25rem;
+  font-size: 1.25rem;
   font-weight: 700;
-  transition: all var(--transition);
+  margin: 0;
+  transition: var(--transition);
   cursor: default;
 }
 
@@ -304,55 +203,38 @@ section:hover::before, .section-block:hover::before {
 
 .company-name {
   color: var(--color-text-muted);
+  font-size: 1rem;
   font-weight: 500;
-  margin-top: 0;
-  margin-bottom: 1.5rem;
-  transition: color var(--transition);
-  animation: slideInFromLeft 0.6s ease-out 0.2s both;
+  margin: 0 0 1.5rem 0;
+  transition: var(--transition);
+  animation: slideInLeft 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both;
 }
 
-.company-name:hover {
-  color: var(--color-text);
-}
-
+/* Enhanced match score */
 .match-score {
+  background: linear-gradient(135deg, var(--color-primary-light), white);
+  color: var(--color-primary-dark);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
   font-size: 0.9rem;
   font-weight: 600;
-  color: var(--color-accent);
-  background: linear-gradient(135deg, var(--color-primary-light), rgba(255,255,255,0.8));
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius);
-  white-space: nowrap;
   border: 1px solid var(--color-primary-light);
-  transition: all var(--transition-bounce);
-  animation: scaleIn 0.6s ease-out 0.3s both;
-  position: relative;
-  overflow: hidden;
-}
-
-.match-score::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
-  transition: left var(--transition);
+  white-space: nowrap;
+  /* Hardware acceleration */
+  transform: translate3d(0, 0, 0);
+  will-change: transform, box-shadow;
+  transition: var(--transition);
+  animation: fadeIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s both;
 }
 
 .match-score:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+  transform: translate3d(0, -2px, 0) scale(1.05);
+  box-shadow: var(--shadow);
 }
 
-.match-score:hover::before {
-  left: 100%;
-}
-
-/* 9. Enhanced AI Analysis Badge */
+/* Enhanced AI analysis badge */
 .ai-analysis-badge {
-  background: linear-gradient(135deg, var(--color-primary-light), rgba(255,255,255,0.9));
+  background: linear-gradient(135deg, var(--color-primary-light), rgba(255, 255, 255, 0.9));
   color: var(--color-primary-dark);
   padding: 0.75rem 1rem;
   border-radius: var(--radius);
@@ -363,201 +245,143 @@ section:hover::before, .section-block:hover::before {
   align-items: center;
   gap: 0.5rem;
   border: 1px solid var(--color-primary-light);
-  transition: all var(--transition);
-  animation: slideInFromRight 0.6s ease-out 0.4s both;
-  position: relative;
-  overflow: hidden;
-}
-
-.ai-analysis-badge::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%);
-  transform: translateX(-100%);
-  transition: transform var(--transition-slow);
+  /* Hardware acceleration */
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+  transition: var(--transition);
+  animation: slideInLeft 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.4s both;
 }
 
 .ai-analysis-badge:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.15);
-  border-color: var(--color-primary);
-}
-
-.ai-analysis-badge:hover::before {
-  transform: translateX(100%);
+  transform: translate3d(0, -2px, 0);
+  box-shadow: var(--shadow);
 }
 
 .ai-icon {
   font-size: 1.2rem;
-  line-height: 1;
   animation: pulse 2s infinite;
 }
 
-/* 10. Enhanced Button Styles */
-.primary-button, .secondary-button, .delete-button, .logout-button, .disabled-button {
-  padding: 0.75rem 1.5rem;
-  border-radius: var(--radius-sm);
-  font-weight: 600;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: all var(--transition);
-  border: 1.5px solid transparent;
-  line-height: 1.2;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  position: relative;
-  overflow: hidden;
-  min-width: 160px;
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
 }
 
-.primary-button::before, .secondary-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-  transition: left var(--transition);
-  z-index: 1;
+/* Enhanced buttons */
+.primary-button, .secondary-button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  /* Hardware acceleration */
+  transform: translate3d(0, 0, 0);
+  will-change: transform, box-shadow;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
 }
 
 .primary-button {
   background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
   color: white;
-  border-color: var(--color-primary);
-  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.2);
+  box-shadow: var(--shadow);
 }
 
 .primary-button:hover {
-  background: linear-gradient(135deg, var(--color-secondary), var(--color-accent));
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.3);
-}
-
-.primary-button:hover::before {
-  left: 100%;
+  transform: translate3d(0, -2px, 0);
+  box-shadow: var(--shadow-lg);
 }
 
 .primary-button:active {
-  transform: translateY(0);
-  box-shadow: var(--shadow-active);
+  transform: translate3d(0, 0, 0);
 }
 
 .secondary-button {
   background: var(--color-surface);
   color: var(--color-primary);
-  border: 1.5px solid var(--color-primary);
-  backdrop-filter: blur(8px);
+  border: 1px solid var(--color-primary);
 }
 
 .secondary-button:hover {
   background: var(--color-primary-light);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+  transform: translate3d(0, -2px, 0);
+  box-shadow: var(--shadow);
 }
 
-.secondary-button:hover::before {
-  left: 100%;
-}
-
-.large-button {
-  font-size: 1.1rem;
-  padding: 1rem 2rem;
-  width: 100%;
-  max-width: 400px;
-  margin: 1rem auto 0 auto;
-  display: block;
-  animation: scaleIn 0.6s ease-out 0.5s both;
-}
-
-/* 11. Enhanced Loading States */
-.loading, .error-message, .info-message {
+/* Enhanced loading states */
+.loading {
   text-align: center;
-  padding: 2rem;
-  font-size: 1.15rem;
-  background: var(--color-glass);
+  padding: 3rem 2rem;
+  font-size: 1.1rem;
+  color: var(--color-text-muted);
+  background: var(--color-surface);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  margin: 1.5rem auto;
-  max-width: 600px;
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--color-border);
-  animation: fadeInUp 0.6s ease-out;
-}
-
-.loading {
-  color: var(--color-text-muted);
-  position: relative;
-  overflow: hidden;
-}
-
-.loading::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -200px;
-  width: 200px;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(79, 70, 229, 0.1), transparent);
-  animation: shimmer 2s infinite;
+  animation: fadeIn 0.6s ease-out;
 }
 
 .error-message {
-  color: var(--color-error);
   background: rgba(239, 68, 68, 0.1);
-  border-color: var(--color-error);
+  color: var(--color-error);
+  padding: 1rem 1.5rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-error);
+  text-align: center;
+  animation: fadeIn 0.6s ease-out;
 }
 
 .info-message {
+  background: var(--color-surface);
   color: var(--color-text-muted);
-  border-color: var(--color-border);
+  padding: 1rem 1.5rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  text-align: center;
+  animation: fadeIn 0.6s ease-out;
 }
 
-/* 12. Enhanced Job List Container */
+/* Enhanced job list container */
 .job-list-container {
   display: grid;
   gap: 1.5rem;
   grid-template-columns: 1fr;
 }
 
-@media (min-width: 800px) {
-  .job-list-container {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
 .job-list-container .job-card {
-  animation-delay: calc(var(--card-index, 0) * 0.1s);
+  animation-delay: calc(var(--index, 0) * 0.1s);
 }
 
-/* 13. Enhanced Expandable Content */
+/* Enhanced page header */
+.page-header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--color-border);
+  animation: slideInLeft 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.1s both;
+}
+
+/* Enhanced expandable content */
 .expandable-content {
-  max-height: var(--collapsed-height, 120px);
   overflow: hidden;
-  position: relative;
   transition: max-height var(--transition-slow) ease-in-out;
-  animation: fadeInUp 0.6s ease-out 0.6s both;
+  animation: fadeIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.6s both;
 }
 
 .expandable-content.expanded {
   max-height: 2000px;
-}
-
-.expandable-content:not(.expanded)::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 60px;
-  background: linear-gradient(to bottom, transparent, var(--color-surface));
-  pointer-events: none;
 }
 
 .read-more-button {
@@ -568,20 +392,7 @@ section:hover::before, .section-block:hover::before {
   cursor: pointer;
   padding: 0.5rem 0;
   margin-top: 0.5rem;
-  display: inline-block;
-  transition: all var(--transition);
-  position: relative;
-}
-
-.read-more-button::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: var(--color-primary);
-  transition: width var(--transition);
+  transition: var(--transition);
 }
 
 .read-more-button:hover {
@@ -589,19 +400,13 @@ section:hover::before, .section-block:hover::before {
   transform: translateX(4px);
 }
 
-.read-more-button:hover::after {
-  width: 100%;
-}
-
-/* 14. Enhanced Job Link Button */
+/* Enhanced job link button */
 .job-link-button {
-  text-decoration: none;
-  display: inline-block;
   margin-top: 1rem;
-  animation: slideInFromRight 0.6s ease-out 0.7s both;
+  animation: fadeIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.7s both;
 }
 
-/* 15. Enhanced Responsive Design */
+/* Responsive design */
 @media (max-width: 768px) {
   .container {
     padding: 1rem;
@@ -610,7 +415,6 @@ section:hover::before, .section-block:hover::before {
   .page-header-section {
     flex-direction: column;
     align-items: flex-start;
-    text-align: left;
   }
   
   .job-card-header {
@@ -618,382 +422,23 @@ section:hover::before, .section-block:hover::before {
     align-items: flex-start;
     gap: 0.5rem;
   }
-  
-  .match-score {
-    align-self: flex-start;
-  }
-  
-  .primary-button, .secondary-button {
-    width: 100%;
-    margin-bottom: 0.5rem;
-  }
 }
 
-/* 16. Utility Classes for Animations */
-.fade-in-up {
-  animation: fadeInUp 0.6s ease-out forwards;
-  opacity: 0;
-}
+/* Utility classes for staggered animations */
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }
+.stagger-5 { animation-delay: 0.5s; }
 
-.slide-in-left {
-  animation: slideInFromLeft 0.6s ease-out forwards;
-  opacity: 0;
-}
-
-.slide-in-right {
-  animation: slideInFromRight 0.6s ease-out forwards;
-  opacity: 0;
-}
-
-.scale-in {
-  animation: scaleIn 0.6s ease-out forwards;
-  opacity: 0;
-}
-
-/* 17. Enhanced Focus States for Accessibility */
-button:focus-visible, 
-a:focus-visible, 
-input:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-  border-radius: var(--radius-sm);
-}
-
-/* 18. Smooth Scroll Behavior */
+/* Smooth scroll behavior */
 html {
   scroll-behavior: smooth;
 }
 
-/* 19. Enhanced Results Wrapper */
-.results-wrapper {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  padding: var(--spacing);
-  margin-top: 1.5rem;
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(10px);
-  animation: fadeInUp 0.6s ease-out 0.3s both;
+/* Enhanced focus states */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
-
-.results-wrapper .info-message,
-.results-wrapper .loading,
-.results-wrapper .error-message {
-  background-color: transparent;
-  box-shadow: none;
-  border: none;
-  margin: 0;
-  padding: 1rem;
-}
-
-/* Add these additional styles to your CSS file */
-
-/* Loading spinner for buttons */
-.loading-spinner {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255,255,255,0.3);
-  border-radius: 50%;
-  border-top-color: white;
-  animation: spin 1s linear infinite;
-  margin-right: 0.5rem;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Loading dots animation */
-.loading-dots {
-  display: inline-flex;
-  gap: 0.25rem;
-  margin-left: 0.5rem;
-}
-
-.loading-dots span {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: var(--color-primary);
-  animation: bounce 1.4s infinite ease-in-out both;
-}
-
-.loading-dots span:nth-child(1) { animation-delay: -0.32s; }
-.loading-dots span:nth-child(2) { animation-delay: -0.16s; }
-.loading-dots span:nth-child(3) { animation-delay: 0s; }
-
-@keyframes bounce {
-  0%, 80%, 100% {
-    transform: scale(0);
-  }
-  40% {
-    transform: scale(1);
-  }
-}
-
-/* Smooth state transitions */
-.disabled-button {
-  background: var(--color-tag-bg) !important;
-  color: var(--color-text-muted) !important;
-  border-color: var(--color-border) !important;
-  cursor: not-allowed !important;
-  opacity: 0.7;
-  transform: none !important;
-}
-
-/* Enhanced hover states for better feedback */
-.job-card:hover .job-title {
-  color: var(--color-accent);
-}
-
-.job-card:hover .company-name {
-  color: var(--color-text);
-}
-
-.job-card:hover .ai-analysis-badge {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.15);
-}
-
-/* Enhanced Home Page Styles */
-.home-page-container {
-    animation: fadeInUp 0.8s ease-out;
-}
-
-/* Enhanced User Section */
-.user-section .user-details {
-    flex-grow: 1;
-}
-
-.user-section .user-stats {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
-}
-
-.user-section .generation-count {
-    color: var(--color-text-muted);
-    font-size: 0.95rem;
-}
-
-.user-section .generation-count strong {
-    color: var(--color-primary);
-    font-weight: 600;
-}
-
-.saved-indicator {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--color-success);
-    font-weight: 500;
-    font-size: 0.9rem;
-}
-
-.saved-indicator .checkmark {
-    background: var(--color-success);
-    color: white;
-    border-radius: 50%;
-    width: 18px;
-    height: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.7rem;
-    animation: pulse 2s infinite;
-}
-
-/* Enhanced Career Hub */
-.career-hub-section .hub-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
-
-.career-hub-section .hub-icon {
-    font-size: 1.5rem;
-    margin-right: 0.5rem;
-}
-
-.career-hub-section .hub-badge {
-    background: linear-gradient(135deg, var(--color-accent), var(--color-secondary));
-    color: white;
-    padding: 0.4rem 0.8rem;
-    border-radius: var(--radius);
-    font-size: 0.8rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    animation: scaleIn 0.6s ease-out 0.8s both;
-}
-
-.career-hub-section .hub-features {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    margin: 1.5rem 0;
-    flex-wrap: wrap;
-}
-
-.career-hub-section .feature-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--color-text-muted);
-    font-size: 0.9rem;
-    font-weight: 500;
-    animation: slideInFromLeft 0.6s ease-out;
-}
-
-.career-hub-section .feature-item:nth-child(1) { animation-delay: 0.7s; }
-.career-hub-section .feature-item:nth-child(2) { animation-delay: 0.8s; }
-.career-hub-section .feature-item:nth-child(3) { animation-delay: 0.9s; }
-
-.career-hub-section .feature-icon {
-    font-size: 1.1rem;
-}
-
-/* Enhanced Auth Section */
-.auth-section .auth-welcome {
-    margin-bottom: 2rem;
-    text-align: center;
-}
-
-.auth-section .auth-welcome h2 {
-    color: var(--color-primary);
-    margin-bottom: 0.5rem;
-    font-size: 1.8rem;
-}
-
-.auth-section .auth-welcome p {
-    color: var(--color-text-muted);
-    line-height: 1.6;
-    max-width: 400px;
-    margin: 0 auto;
-}
-
-.auth-section .github-icon {
-    margin-right: 0.5rem;
-    display: inline-flex;
-    align-items: center;
-}
-
-.auth-section .auth-checkbox-label {
-    position: relative;
-    padding-left: 2rem;
-}
-
-.auth-section .checkmark-custom {
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 18px;
-    height: 18px;
-    border: 2px solid var(--color-border);
-    border-radius: 4px;
-    background: white;
-    transition: all var(--transition);
-}
-
-.auth-section input[type="checkbox"]:checked + .checkmark-custom {
-    background: var(--color-primary);
-    border-color: var(--color-primary);
-}
-
-.auth-section input[type="checkbox"]:checked + .checkmark-custom::after {
-    content: '✓';
-    color: white;
-    font-size: 0.8rem;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-.auth-section .auth-benefits {
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-    margin-top: 2rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--color-border);
-}
-
-.auth-section .benefit-item {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    color: var(--color-text-muted);
-    font-size: 0.9rem;
-    animation: slideInFromRight 0.6s ease-out;
-}
-
-.auth-section .benefit-item:nth-child(1) { animation-delay: 0.4s; }
-.auth-section .benefit-item:nth-child(2) { animation-delay: 0.5s; }
-.auth-section .benefit-item:nth-child(3) { animation-delay: 0.6s; }
-
-.auth-section .benefit-icon {
-    font-size: 1.1rem;
-    width: 20px;
-    text-align: center;
-}
-
-/* Enhanced Button Icons */
-.button-icon {
-    margin-right: 0.5rem;
-    font-size: 1rem;
-}
-
-.disabled-icon {
-    margin-right: 0.5rem;
-    opacity: 0.6;
-}
-
-/* Enhanced Responsive Design */
-@media (max-width: 768px) {
-    .career-hub-section .hub-header {
-        flex-direction: column;
-        align-items: flex-start;
-        text-align: left;
-    }
-    
-    .career-hub-section .hub-features {
-        flex-direction: column;
-        gap: 1rem;
-        align-items: flex-start;
-    }
-    
-    .career-hub-section .hub-actions {
-        flex-direction: column;
-        width: 100%;
-    }
-    
-    .career-hub-section .hub-button {
-        width: 100%;
-        margin-bottom: 0.5rem;
-    }
-    
-    .auth-section .auth-benefits {
-        align-items: flex-start;
-    }
-}
-
-/* Loading state enhancements */
-.user-section.loading {
-    opacity: 0.7;
-    pointer-events: none;
-}
-
-.user-section.loading * {
-    transition: opacity var(--transition);
-}
-
