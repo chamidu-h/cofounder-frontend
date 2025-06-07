@@ -131,6 +131,45 @@ class ApiService {
         // Expects { activeConnections: [{ id (user_id), github_username, ... }, ...] }
         return response.data;
     }
+
+    // --- NEW: Job and CV Matching Methods ---
+
+    /**
+     * Fetches all job postings for the public job board.
+     */
+    async getAllJobs() {
+        const response = await this.api.get('/jobs'); // Corresponds to GET /api/jobs
+        return response.data;
+    }
+
+    /**
+     * Fetches the current user's saved CV information (filename, last updated).
+     */
+    async getUserCvInfo() {
+        const response = await this.api.get('/cv/info'); // A new endpoint to get CV metadata
+        return response.data;
+    }
+
+    /**
+     * Uploads a new CV file for the authenticated user.
+     * @param {FormData} formData - The form data containing the CV file.
+     */
+    async uploadUserCv(formData) {
+        const response = await this.api.post('/cv/upload', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        return response.data;
+    }
+
+    /**
+     * Triggers the job matching process for the authenticated user's saved CV.
+     */
+    async getMatchesForUser() {
+        const response = await this.api.get('/cv/match');
+        return response.data;
+    }
 }
 
 export default new ApiService();
