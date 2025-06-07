@@ -33,31 +33,38 @@ const CvMatcherPage = () => {
                 <h1>CV Job Matcher</h1>
                 <Link to="/jobs" className="secondary-button">View All Jobs</Link>
             </div>
-
             <CVManager onUploadSuccess={() => setMatchMessage('CV updated! You can now find matches.')} />
-
             <section className="match-trigger-section section-block">
                 <h3>Find Your Matches</h3>
-                <p>Once you have a CV on file, click the button below to analyze our job listings and find the best matches for you.</p>
+                <p>Your career, supercharged by AI. Upload your resume to unlock a prioritized list of jobs where your skills give you the highest chance of getting hired.</p>
                 <button onClick={handleFindMatches} className="primary-button large-button" disabled={isMatching}>
                     {isMatching ? 'Analyzing...' : 'Find Matches with My Saved CV'}
                 </button>
             </section>
-
             <section className="results-section">
                 <h3>Matching Results</h3>
-                {isMatching && <div className="loading">Searching for your perfect job...</div>}
-                {matchError && <div className="error-message">{matchError}</div>}
-                {!isMatching && !matchError && (
-                    <>
-                        {matchedJobs.length === 0 && <p className="info-message">{matchMessage}</p>}
-                        <div className="job-list-container">
-                            {matchedJobs.map(job => (
-                                <JobCard key={job.id} job={job} />
-                            ))}
-                        </div>
-                    </>
-                )}
+                <div className="results-wrapper"> {/* New wrapper for visual grouping */}
+                    {isMatching && <div className="loading">Searching for your perfect job...</div>}
+                    {matchError && <div className="error-message">{matchError}</div>}
+                    {!isMatching && !matchError && (
+                        <>
+                            {matchedJobs.length === 0 ? (
+                                <p className="info-message">{matchMessage}</p>
+                            ) : (
+                                <div className="job-list-container">
+                                    {matchedJobs.map((job, index) => (
+                                        <JobCard
+                                            key={job.id}
+                                            job={job}
+                                            className="fade-in-up"
+                                            style={{ animationDelay: `${index * 100}ms` }}
+                                        />
+                                    ))}
+                                </div>
+                            )}
+                        </>
+                    )}
+                </div>
             </section>
         </div>
     );

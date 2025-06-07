@@ -24,22 +24,33 @@ const JobBoardPage = () => {
     }, []);
 
     return (
-        <div className="container">
+        <div className="container job-board-page-container"> {/* New class for grid targeting */}
             <div className="page-header-section">
                 <h1>Available Job Openings</h1>
                 <Link to="/matcher" className="primary-button">Match Your CV</Link>
             </div>
-            {loading && <div className="loading">Loading jobs...</div>}
-            {error && <div className="error-message">{error}</div>}
-            {!loading && !error && (
-                <div className="job-list-container">
-                    {jobs.length > 0 ? (
-                        jobs.map(job => <JobCard key={job.id} job={job} />)
-                    ) : (
-                        <p className="info-message">No job openings are available at the moment. Please check back later.</p>
-                    )}
-                </div>
-            )}
+            <div className="results-wrapper"> {/* New wrapper for visual grouping */}
+                {loading && <div className="loading">Loading jobs...</div>}
+                {error && <div className="error-message">{error}</div>}
+                {!loading && !error && (
+                    <>
+                        {jobs.length > 0 ? (
+                            <div className="job-list-container">
+                                {jobs.map((job, index) => (
+                                    <JobCard
+                                        key={job.id}
+                                        job={job}
+                                        className="fade-in-up"
+                                        style={{ animationDelay: `${index * 100}ms` }}
+                                    />
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="info-message">No job openings are available at the moment. Please check back later.</p>
+                        )}
+                    </>
+                )}
+            </div>
         </div>
     );
 };
