@@ -95,7 +95,7 @@ export default function Home() {
                         )}
                         {user.hasSavedProfile && (
                             <button onClick={() => navigate('/profile')} className="secondary-button">
-                                View Saved Profile
+                                Your Profile
                             </button>
                         )}
                         <button onClick={handleLogout} className="logout-button">
