@@ -1,6 +1,7 @@
 // src/components/JobCard.js
 import React from 'react';
 import DOMPurify from 'dompurify'; // Import the sanitizer
+import ExpandableContent from './ExpandableContent';
 
 const JobCard = ({ job, matchScore = null }) => {
     // 1. Sanitize the HTML string from the database before rendering.
@@ -22,10 +23,12 @@ const JobCard = ({ job, matchScore = null }) => {
               2. Use dangerouslySetInnerHTML to render the *sanitized* HTML.
               The property expects an object with a key `__html`.
             */}
+            <ExpandableContent collapsedHeight="120px">
             <div
                 className="job-description-content"
                 dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
             />
+            </ExpandableContent>
 
             <a href={job.job_url} target="_blank" rel="noopener noreferrer" className="primary-button job-link-button">
                 View & Apply
