@@ -53,7 +53,7 @@ const CvMatcherPage = () => {
                         {matchedJobs.length === 0 && <p className="info-message">{matchMessage}</p>}
                         <div className="job-list-container">
                             {matchedJobs.map(job => (
-                                <JobCard key={job.id} job={job} matchScore={job.score * 100} />
+                                <JobCard key={job.id} job={job} />
                             ))}
                         </div>
                     </>

@@ -821,5 +821,34 @@ section:hover { box-shadow: 0 8px 32px rgba(99,102,241,0.10); border-color: var(
     text-decoration: underline;
 }
 
+/* src/index.css */
+
+/* --- NEW STYLES FOR AI ANALYSIS BADGE --- */
+
+.ai-analysis-badge {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary-dark, #3730a3); /* Added a fallback color */
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid var(--color-primary-light);
+}
+
+.ai-icon {
+    font-size: 1.2rem;
+    line-height: 1; /* Helps align the emoji consistently */
+}
+
+/* Optional: Tweak the existing match-score for better visibility */
+.match-score {
+    white-space: nowrap; /* Prevents the text from wrapping */
+}
+
+
 
 
