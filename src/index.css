@@ -1819,6 +1819,255 @@ a:focus-visible {
   flex-wrap: wrap;
 }
 
+/* Enhanced Profile Header Animations */
+.profile-header-section {
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing);
+  margin-bottom: var(--spacing);
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-header-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.profile-header-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing);
+}
+
+/* Refined Avatar Styles */
+.profile-avatar-section {
+  flex-shrink: 0;
+}
+
+.profile-avatar-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.profile-main-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid var(--color-border-light);
+  object-fit: cover;
+  background: var(--color-surface);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
+}
+
+.profile-main-avatar:hover {
+  transform: scale(1.05);
+  border-color: var(--color-primary-light);
+  box-shadow: var(--shadow);
+}
+
+.profile-main-avatar.loading {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.profile-avatar-placeholder-main {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary-light), var(--color-accent));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--color-border-light);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.profile-avatar-placeholder-main:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow);
+}
+
+.avatar-initials {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  text-transform: uppercase;
+}
+
+.avatar-status-dot {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 12px;
+  height: 12px;
+  background: var(--color-success);
+  border: 2px solid white;
+  border-radius: 50%;
+  box-shadow: var(--shadow-sm);
+  animation: pulse 2s infinite;
+}
+
+/* Profile Info Styles */
+.profile-info-section {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-name-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.profile-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.github-link-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  padding: 0.4rem 0.75rem;
+  border-radius: var(--radius);
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: 1px solid var(--color-border);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+}
+
+.github-link-badge:hover {
+  color: var(--color-primary);
+  border-color: var(--color-primary-light);
+  background: var(--color-primary-light);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.github-icon {
+  transition: transform 0.2s ease;
+}
+
+.profile-headline {
+  color: var(--color-text-muted);
+  font-size: 1rem;
+  line-height: 1.4;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* Animation Keyframes */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .profile-header-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .profile-name-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  
+  .profile-name {
+    font-size: 1.3rem;
+  }
+  
+  .profile-main-avatar,
+  .profile-avatar-placeholder-main {
+    width: 56px;
+    height: 56px;
+  }
+  
+  .avatar-initials {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-header-section {
+    padding: 1rem;
+  }
+  
+  .profile-main-avatar,
+  .profile-avatar-placeholder-main {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .avatar-initials {
+    font-size: 0.9rem;
+  }
+  
+  .profile-name {
+    font-size: 1.2rem;
+  }
+  
+  .profile-headline {
+    font-size: 0.9rem;
+  }
+  
+  .github-link-badge {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+  }
+}
+
+
 /* Profile Content Grid */
 .profile-content-grid {
   display: grid;
