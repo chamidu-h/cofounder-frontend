@@ -757,3 +757,243 @@ html {
   transform: translateY(-2px);
   box-shadow: 0 4px 16px rgba(79, 70, 229, 0.15);
 }
+
+/* Enhanced Home Page Styles */
+.home-page-container {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+/* Enhanced User Section */
+.user-section .user-details {
+    flex-grow: 1;
+}
+
+.user-section .user-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.user-section .generation-count {
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+}
+
+.user-section .generation-count strong {
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+.saved-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-success);
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.saved-indicator .checkmark {
+    background: var(--color-success);
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    animation: pulse 2s infinite;
+}
+
+/* Enhanced Career Hub */
+.career-hub-section .hub-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.career-hub-section .hub-icon {
+    font-size: 1.5rem;
+    margin-right: 0.5rem;
+}
+
+.career-hub-section .hub-badge {
+    background: linear-gradient(135deg, var(--color-accent), var(--color-secondary));
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--radius);
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    animation: scaleIn 0.6s ease-out 0.8s both;
+}
+
+.career-hub-section .hub-features {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin: 1.5rem 0;
+    flex-wrap: wrap;
+}
+
+.career-hub-section .feature-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+    animation: slideInFromLeft 0.6s ease-out;
+}
+
+.career-hub-section .feature-item:nth-child(1) { animation-delay: 0.7s; }
+.career-hub-section .feature-item:nth-child(2) { animation-delay: 0.8s; }
+.career-hub-section .feature-item:nth-child(3) { animation-delay: 0.9s; }
+
+.career-hub-section .feature-icon {
+    font-size: 1.1rem;
+}
+
+/* Enhanced Auth Section */
+.auth-section .auth-welcome {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.auth-section .auth-welcome h2 {
+    color: var(--color-primary);
+    margin-bottom: 0.5rem;
+    font-size: 1.8rem;
+}
+
+.auth-section .auth-welcome p {
+    color: var(--color-text-muted);
+    line-height: 1.6;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.auth-section .github-icon {
+    margin-right: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+}
+
+.auth-section .auth-checkbox-label {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.auth-section .checkmark-custom {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--color-border);
+    border-radius: 4px;
+    background: white;
+    transition: all var(--transition);
+}
+
+.auth-section input[type="checkbox"]:checked + .checkmark-custom {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.auth-section input[type="checkbox"]:checked + .checkmark-custom::after {
+    content: '✓';
+    color: white;
+    font-size: 0.8rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.auth-section .auth-benefits {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-border);
+}
+
+.auth-section .benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    animation: slideInFromRight 0.6s ease-out;
+}
+
+.auth-section .benefit-item:nth-child(1) { animation-delay: 0.4s; }
+.auth-section .benefit-item:nth-child(2) { animation-delay: 0.5s; }
+.auth-section .benefit-item:nth-child(3) { animation-delay: 0.6s; }
+
+.auth-section .benefit-icon {
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+}
+
+/* Enhanced Button Icons */
+.button-icon {
+    margin-right: 0.5rem;
+    font-size: 1rem;
+}
+
+.disabled-icon {
+    margin-right: 0.5rem;
+    opacity: 0.6;
+}
+
+/* Enhanced Responsive Design */
+@media (max-width: 768px) {
+    .career-hub-section .hub-header {
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+    }
+    
+    .career-hub-section .hub-features {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+    
+    .career-hub-section .hub-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .career-hub-section .hub-button {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .auth-section .auth-benefits {
+        align-items: flex-start;
+    }
+}
+
+/* Loading state enhancements */
+.user-section.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.user-section.loading * {
+    transition: opacity var(--transition);
+}
+
