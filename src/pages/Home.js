@@ -102,7 +102,7 @@ export default function Home() {
     return (
         <div className="home-container">
             <div className={`home-content ${animationTriggered ? 'animate-in' : ''}`}>
-                <h1 className="home-title">Cofounder Profile Generator</h1>
+                <h1 className="home-title">AI Powered Career Hub</h1>
 
                 {user ? (
                     // LOGGED-IN USER VIEW
