@@ -1,53 +1,75 @@
 // src/components/JobCard.js
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import ExpandableContent from './ExpandableContent';
 import StructuredDescription from './StructuredDescription';
 
-const JobCard = ({ job }) => {
-// Note: We no longer need the 'matchScore' prop, as all scoring
-// information is now contained within the 'job' object itself.
+const JobCard = ({ job, index = 0 }) => {
+  const cardRef = useRef(null);
 
-return (
-<div className="job-card section-block">
-<div className="job-card-header">
-<h3 className="job-title">{job.job_title}</h3>
-{/*
-Display the new, more accurate finalScore as a percentage.
-This provides a single, clear metric of match quality to the user.
-*/}
-{job.finalScore && (
-<span className="match-score">
-{(job.finalScore * 100).toFixed(0)}% Match
-</span>
-)}
-</div>
-<h4 className="company-name">{job.company_name}</h4>
+  useEffect(() => {
+    // Add staggered animation delay based on card index
+    if (cardRef.current) {
+      cardRef.current.style.setProperty('--card-index', index);
+      
+      // Add intersection observer for scroll-triggered animations
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('fade-in-up');
+            }
+          });
+        },
+        { threshold: 0.1 }
+      );
+      
+      observer.observe(cardRef.current);
+      
+      return () => observer.disconnect();
+    }
+  }, [index]);
 
-{/*
---- NEW: AI Analysis Badge ---
-Display the AI's reasoning. This is crucial for showing the user
-*why* a job is a good match, adding immense value and building trust.
-*/}
-{job.aiAnalysis && job.aiAnalysis.reason && (
-<div className="ai-analysis-badge">
-<span className="ai-icon">🤖</span>
-AI Insight: {job.aiAnalysis.reason}
-</div>
-)}
+  return (
+    <div 
+      ref={cardRef}
+      className="job-card section-block"
+      style={{ animationDelay: `${index * 0.1}s` }}
+    >
+      <div className="job-card-header">
+        <h3 className="job-title">{job.job_title}</h3>
+        {job.finalScore && (
+          <span className="match-score">
+            {(job.finalScore * 100).toFixed(0)}% Match
+          </span>
+        )}
+      </div>
+      
+      <h4 className="company-name">{job.company_name}</h4>
 
-{/* The rest of the component remains the same, using the existing ExpandableContent */}
-<ExpandableContent collapsedHeight="100px">
-<StructuredDescription
-rawText={job.description_html}
-jobTitle={job.job_title}
-/>
-</ExpandableContent>
+      {job.aiAnalysis && job.aiAnalysis.reason && (
+        <div className="ai-analysis-badge">
+          <span className="ai-icon">🤖</span>
+          AI Insight: {job.aiAnalysis.reason}
+        </div>
+      )}
 
-<a href={job.job_url} target="_blank" rel="noopener noreferrer" className="primary-button job-link-button">
-View & Apply
-</a>
-</div>
-);
+      <ExpandableContent collapsedHeight="100px">
+        <StructuredDescription
+          rawText={job.description_html}
+          jobTitle={job.job_title}
+        />
+      </ExpandableContent>
+
+      <a 
+        href={job.job_url} 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        className="primary-button job-link-button"
+      >
+        View & Apply
+      </a>
+    </div>
+  );
 };
 
 export default JobCard;
