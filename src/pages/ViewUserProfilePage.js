@@ -23,7 +23,7 @@ export default function ViewUserProfilePage() {
             return;
         }
 
-        const fetchData = async () => {
+        const fetchProfileData = async () => {
             setLoading(true);
             setError(null);
 
@@ -42,26 +42,21 @@ export default function ViewUserProfilePage() {
                 }
 
                 const isOwnProfile = String(currentUserData.user.id) === String(userId);
-                let connStatus = null;
-
-                if (!isOwnProfile) {
-                    try {
-                        const statusData = await apiService.getConnectionStatus(userId);
-                        connStatus = statusData.status;
-                    } catch (statusError) {
-                        console.error("Failed to fetch connection status:", statusError);
-                    }
-                }
 
                 setData({
                     viewedUser: profileData.user,
                     profile: profileData.profile,
                     currentUser: currentUserData.user,
-                    connectionStatus: connStatus
+                    connectionStatus: null // Initial null; will be updated separately
                 });
 
                 if (!profileData.profile) {
                     setError("This user hasn't created a co-founder profile yet.");
+                }
+
+                // Fetch connection status independently without blocking profile render
+                if (!isOwnProfile) {
+                    fetchConnectionStatus(userId);
                 }
             } catch (err) {
                 console.error("Error loading profile:", err);
@@ -71,7 +66,18 @@ export default function ViewUserProfilePage() {
             }
         };
 
-        fetchData();
+        const fetchConnectionStatus = async (targetUserId) => {
+            try {
+                const statusData = await apiService.getConnectionStatus(targetUserId);
+                setData(prev => ({ ...prev, connectionStatus: statusData.status }));
+            } catch (statusError) {
+                console.error("Failed to fetch connection status (non-critical):", statusError);
+                // Set to null on failure to allow "Send Request" button
+                setData(prev => ({ ...prev, connectionStatus: null }));
+            }
+        };
+
+        fetchProfileData();
     }, [userId, navigate]);
 
     const handleSendConnectionRequest = async () => {
