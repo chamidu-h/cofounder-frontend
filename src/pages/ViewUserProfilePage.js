@@ -53,17 +53,19 @@ export default function ViewUserProfilePage() {
     }, [userId]);
     
     const fetchCurrentUserAndConnectionStatus = useCallback(async () => {
-        if (!userId) return;
-        try {
-            const me = await apiService.getUser(); // Get current logged-in user
-            setCurrentUser(me);
-            if (me && me.user && String(me.user.id) !== String(userId)) { // Don't check status if viewing own profile
-                const status = await apiService.getConnectionStatus(me.user.id, userId); // You'll need to add getConnectionStatus to apiService
-                setConnectionStatus(status);
-            }
-        } catch (err) {
-            console.error("Error fetching current user or connection status:", err);
+      if (!userId) return;
+      try {
+        const me = await apiService.getUser();
+        setCurrentUser(me);
+        if (me && me.user && String(me.user.id) !== String(userId)) {
+          // Pass only the viewed user's ID
+          const statusData = await apiService.getConnectionStatus(userId);
+          setConnectionStatus(statusData.status); // Assuming the API returns { status: '...' }
         }
+      } catch (err) {
+        console.error("Error fetching current user or connection status:", err);
+        // This catch block will now handle network errors without crashing the page.
+      }
     }, [userId]);
 
 
