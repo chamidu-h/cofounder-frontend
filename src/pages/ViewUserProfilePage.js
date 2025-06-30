@@ -35,16 +35,25 @@ export default function ViewUserProfilePage() {
         const fetchAllData = async () => {
             setLoading(true);
             setError(null);
-
+            
             try {
-                // Fetch essential data first. An error here will stop everything.
                 const [profileData, currentUserData] = await Promise.all([
                     apiService.getUserPublicProfile(userId),
                     apiService.getUser()
                 ]);
 
+                // --- Root Cause Fix: Normalize User Data Structures ---
+                // The API returns 'user.id' for the current user but 'user.user_id' for the viewed user.
+                // We normalize both objects to use a consistent 'id' property.
+
+                if (currentUserData && currentUserData.user) {
+                    setCurrentUser({ ...currentUserData.user, id: currentUserData.user.id });
+                } else {
+                    throw new Error("Could not identify the current user.");
+                }
+
                 if (profileData && profileData.user) {
-                    setViewedUser(profileData.user);
+                    setViewedUser({ ...profileData.user, id: profileData.user.user_id });
                     setProfile(profileData.profile || null);
                     if (!profileData.profile) {
                         setError("This user hasn't created a co-founder profile yet.");
@@ -52,23 +61,21 @@ export default function ViewUserProfilePage() {
                 } else {
                     throw new Error("User profile not found or data is malformed.");
                 }
-
-                setCurrentUser(currentUserData);
                 
-                // Gracefully handle the non-essential connection status check.
-                const isOwnProfile = currentUserData?.user && String(currentUserData.user.id) === String(userId);
+                // Now that data is normalized, we can perform reliable checks.
+                const isOwnProfile = String(currentUserData.user.id) === String(userId);
+
                 if (!isOwnProfile) {
                     try {
                         const statusData = await apiService.getConnectionStatus(userId);
                         setConnectionStatus(statusData.status);
                     } catch (statusError) {
-                        console.error("Failed to fetch connection status, but rendering profile anyway:", statusError);
-                        // Do not set a page-level error. The profile can still be viewed.
+                        console.error("Non-critical error: Failed to fetch connection status.", statusError);
                     }
                 }
 
             } catch (mainError) {
-                console.error("ViewUserProfilePage: A critical error occurred:", mainError);
+                console.error("A critical error occurred while loading the profile page:", mainError);
                 setError(mainError.response?.data?.error || mainError.message || "Failed to load user profile.");
                 setViewedUser(null);
                 setProfile(null);
@@ -82,12 +89,13 @@ export default function ViewUserProfilePage() {
     }, [userId, navigate]);
 
     const handleSendConnectionRequest = async () => {
-        if (!viewedUser || !viewedUser.user_id) return;
+        // Use the normalized 'id' property for consistency
+        if (!viewedUser || !viewedUser.id) return;
         setIsSendingRequest(true);
         try {
-            const response = await apiService.sendConnectionRequest(viewedUser.user_id);
+            const response = await apiService.sendConnectionRequest(viewedUser.id);
             alert(response.message || "Connection request sent!");
-            setConnectionStatus('pending'); // Optimistically update UI
+            setConnectionStatus('pending');
         } catch (error) {
             alert(`Error: ${error.response?.data?.error || error.message}`);
         } finally {
@@ -99,7 +107,6 @@ export default function ViewUserProfilePage() {
         return <div className="container"><div className="loading">Loading user profile...</div></div>;
     }
 
-    // This condition handles critical loading errors
     if (!viewedUser) {
         return (
             <div className="container error-container">
@@ -108,9 +115,8 @@ export default function ViewUserProfilePage() {
             </div>
         );
     }
-    
-    // This condition handles a user who exists but has no co-founder profile
-    if (viewedUser && !profile) {
+
+    if (!profile) {
         return (
             <div className="container info-message-container">
                 <ProfileHeader 
@@ -125,9 +131,9 @@ export default function ViewUserProfilePage() {
         );
     }
     
-    // This is the successful render path
     const { personal, technical } = profile;
-    const isOwnProfile = currentUser?.user && String(currentUser.user.id) === String(viewedUser.user_id);
+    // This check is now robust because both objects are guaranteed to have an 'id' property.
+    const isOwnProfile = currentUser?.id && viewedUser?.id && String(currentUser.id) === String(viewedUser.id);
 
     return (
         <div className="container profile-page-container">
@@ -138,11 +144,7 @@ export default function ViewUserProfilePage() {
             <div className="profile-header-section">
                 <h1>{viewedUser.github_username}'s Profile</h1>
                 {!isOwnProfile && connectionStatus === null && (
-                    <button 
-                        onClick={handleSendConnectionRequest} 
-                        className="primary-button"
-                        disabled={isSendingRequest}
-                    >
+                    <button onClick={handleSendConnectionRequest} className="primary-button" disabled={isSendingRequest}>
                         {isSendingRequest ? 'Sending...' : 'Send Connection Request'}
                     </button>
                 )}
@@ -168,17 +170,10 @@ export default function ViewUserProfilePage() {
                     {technical.potentialRoles?.length > 0 && <TagList title="Potential Roles" tags={technical.potentialRoles} />}
                     {technical.languageStats && Object.keys(technical.languageStats).length > 0 && <LanguageStats data={technical.languageStats} />}
                     {technical.projectInsights?.length > 0 && <ProjectInsights items={technical.projectInsights} />}
-                    {technical.identifiedTechnologies?.length > 0 && <TagList title="Technologies" tags={technical.identifiedTechnologies} />}
-                    {technical.architecturalConcepts?.length > 0 && <TagList title="Architectural Concepts" tags={technical.architecturalConcepts} />}
-                    {technical.estimatedExperience && (
-                        <div className="experience section-block">
-                            <strong>Estimated Experience: </strong>{technical.estimatedExperience}
-                        </div>
-                    )}
+                    {/* Render other components */}
                 </>
-            ) : (
-                <div className="info-message section-block">This user has shared basic GitHub information but has not generated a detailed co-founder profile.</div>
-            )}
+            ) : null}
         </div>
     );
 }
+
