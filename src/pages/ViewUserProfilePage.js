@@ -39,13 +39,14 @@ export default function ViewUserProfilePage() {
             setError(null);
             
             try {
+                // Fetch both profile data and current user data
                 const [profileData, currentUserData] = await Promise.all([
                     apiService.getUserPublicProfile(userId),
                     apiService.getUser()
                 ]);
                 
-                // Set state directly from the now-consistent API responses.
-                // No more manual data normalization is needed.
+                // FIXED: No more data normalization needed
+                // Both endpoints now return consistent 'id' properties
                 if (currentUserData && currentUserData.user) {
                     setCurrentUser(currentUserData.user);
                 } else {
@@ -54,7 +55,9 @@ export default function ViewUserProfilePage() {
 
                 if (profileData && profileData.user) {
                     setViewedUser(profileData.user);
-                    setProfile(profileData.profile); // This will be null if no profile exists
+                    setProfile(profileData.profile); // Will be null if no profile exists
+                    
+                    // Set appropriate error message if no profile exists
                     if (!profileData.profile) {
                         setError("This user hasn't created a co-founder profile yet.");
                     }
@@ -62,19 +65,22 @@ export default function ViewUserProfilePage() {
                     throw new Error("User profile not found or data is malformed.");
                 }
                 
-                // Perform the connection status check with simplified logic.
+                // FIXED: Simplified comparison logic with consistent data structure
                 const isOwnProfile = String(currentUserData.user.id) === String(userId);
+                
+                // Only fetch connection status if viewing another user's profile
                 if (!isOwnProfile) {
                     try {
                         const statusData = await apiService.getConnectionStatus(userId);
                         setConnectionStatus(statusData.status);
                     } catch (statusError) {
                         console.error("Non-critical error: Failed to fetch connection status.", statusError);
+                        // Don't set error state for connection status failures
                     }
                 }
 
             } catch (mainError) {
-                console.error("A critical error occurred while loading the profile page:", mainError);
+                console.error("Critical error occurred while loading profile page:", mainError);
                 setError(mainError.response?.data?.error || mainError.message || "Failed to load user profile.");
                 setViewedUser(null);
                 setProfile(null);
@@ -89,6 +95,7 @@ export default function ViewUserProfilePage() {
 
     const handleSendConnectionRequest = async () => {
         if (!viewedUser || !viewedUser.id) return;
+        
         setIsSendingRequest(true);
         try {
             const response = await apiService.sendConnectionRequest(viewedUser.id);
@@ -101,21 +108,30 @@ export default function ViewUserProfilePage() {
         }
     };
 
+    // Loading state
     if (loading) {
-        return <div className="container"><div className="loading">Loading user profile...</div></div>;
-    }
-
-    // Handles critical loading errors where we couldn't get basic user info.
-    if (!viewedUser) {
         return (
-            <div className="container error-container">
-                <div className="error-message">{error || "Could not load user profile."}</div>
-                <Link to="/profile" className="secondary-button">Back to My Profile</Link>
+            <div className="container">
+                <div className="loading">Loading user profile...</div>
             </div>
         );
     }
 
-    // Handles the case where the user exists but has not created a detailed profile.
+    // FIXED: Critical error handling - user data couldn't be loaded
+    if (!viewedUser) {
+        return (
+            <div className="container error-container">
+                <div className="error-message">
+                    {error || "Could not load user profile."}
+                </div>
+                <Link to="/profile" className="secondary-button">
+                    Back to My Profile
+                </Link>
+            </div>
+        );
+    }
+
+    // FIXED: Handle case where user exists but has no profile
     if (!profile) {
         return (
             <div className="container info-message-container">
@@ -125,36 +141,62 @@ export default function ViewUserProfilePage() {
                     html_url={viewedUser.github_profile_url}
                     headline="Profile Not Created"
                 />
-                <div className="info-message">{error || "This user has not created a co-founder profile yet."}</div>
-                <Link to="/profile" className="secondary-button">Back to My Profile</Link>
+                <div className="info-message">
+                    {error || "This user has not created a co-founder profile yet."}
+                </div>
+                <Link to="/profile" className="secondary-button">
+                    Back to My Profile
+                </Link>
             </div>
         );
     }
     
+    // FIXED: Reliable profile ownership check with consistent data structure
+    const isOwnProfile = currentUser?.id && viewedUser?.id && 
+                        String(currentUser.id) === String(viewedUser.id);
+
+    // Extract profile data
     const { personal, technical } = profile;
-    const isOwnProfile = currentUser?.id && viewedUser?.id && String(currentUser.id) === String(viewedUser.id);
 
     return (
         <div className="container profile-page-container">
+            {/* Navigation */}
             <div style={{ marginBottom: 'var(--spacing)' }}>
-                <Link to="/profile" className="secondary-button">&larr; Back to My Profile & Suggestions</Link>
+                <Link to="/profile" className="secondary-button">
+                    &larr; Back to My Profile & Suggestions
+                </Link>
             </div>
 
+            {/* Profile Header with Connection Actions */}
             <div className="profile-header-section">
                 <h1>{viewedUser.github_username}'s Profile</h1>
+                
+                {/* Connection Request Button - Only show for other users */}
                 {!isOwnProfile && connectionStatus === null && (
-                    <button onClick={handleSendConnectionRequest} className="primary-button" disabled={isSendingRequest}>
+                    <button 
+                        onClick={handleSendConnectionRequest} 
+                        className="primary-button" 
+                        disabled={isSendingRequest}
+                    >
                         {isSendingRequest ? 'Sending...' : 'Send Connection Request'}
                     </button>
                 )}
+                
+                {/* Connection Status Indicators */}
                 {!isOwnProfile && connectionStatus === 'pending' && (
-                    <button className="disabled-button" disabled>Request Sent</button>
+                    <button className="disabled-button" disabled>
+                        Request Sent
+                    </button>
                 )}
+                
                 {!isOwnProfile && connectionStatus === 'accepted' && (
-                    <button className="disabled-button" disabled>Connected</button>
+                    <button className="disabled-button" disabled>
+                        Connected
+                    </button>
                 )}
             </div>
 
+            {/* Profile Header Component */}
             <ProfileHeader
                 name={personal?.name || viewedUser.github_username || 'N/A'}
                 avatar_url={personal?.avatar_url || viewedUser.github_avatar_url}
@@ -162,14 +204,33 @@ export default function ViewUserProfilePage() {
                 headline={technical?.headline || 'N/A'}
             />
             
+            {/* Profile Content - Only render if both personal and technical data exist */}
             {personal && technical ? (
                 <>
-                    {technical.coFounderSummary && <Overview text={technical.coFounderSummary} />}
-                    {technical.keyStrengths?.length > 0 && <TagList title="Key Strengths" tags={technical.keyStrengths} />}
-                    {technical.potentialRoles?.length > 0 && <TagList title="Potential Roles" tags={technical.potentialRoles} />}
-                    {technical.languageStats && Object.keys(technical.languageStats).length > 0 && <LanguageStats data={technical.languageStats} />}
-                    {technical.projectInsights?.length > 0 && <ProjectInsights items={technical.projectInsights} />}
-                    {/* Render other components */}
+                    {/* Co-founder Summary */}
+                    {technical.coFounderSummary && (
+                        <Overview text={technical.coFounderSummary} />
+                    )}
+                    
+                    {/* Key Strengths */}
+                    {technical.keyStrengths?.length > 0 && (
+                        <TagList title="Key Strengths" tags={technical.keyStrengths} />
+                    )}
+                    
+                    {/* Potential Roles */}
+                    {technical.potentialRoles?.length > 0 && (
+                        <TagList title="Potential Roles" tags={technical.potentialRoles} />
+                    )}
+                    
+                    {/* Language Statistics */}
+                    {technical.languageStats && Object.keys(technical.languageStats).length > 0 && (
+                        <LanguageStats data={technical.languageStats} />
+                    )}
+                    
+                    {/* Project Insights */}
+                    {technical.projectInsights?.length > 0 && (
+                        <ProjectInsights items={technical.projectInsights} />
+                    )}
                 </>
             ) : null}
         </div>
