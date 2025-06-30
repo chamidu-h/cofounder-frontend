@@ -1,3 +1,5 @@
+// src/pages/ViewUserProfilePage.js
+
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import apiService from '../services/apiService';
@@ -41,20 +43,18 @@ export default function ViewUserProfilePage() {
                     apiService.getUserPublicProfile(userId),
                     apiService.getUser()
                 ]);
-
-                // --- Root Cause Fix: Normalize User Data Structures ---
-                // The API returns 'user.id' for the current user but 'user.user_id' for the viewed user.
-                // We normalize both objects to use a consistent 'id' property.
-
+                
+                // Set state directly from the now-consistent API responses.
+                // No more manual data normalization is needed.
                 if (currentUserData && currentUserData.user) {
-                    setCurrentUser({ ...currentUserData.user, id: currentUserData.user.id });
+                    setCurrentUser(currentUserData.user);
                 } else {
                     throw new Error("Could not identify the current user.");
                 }
 
                 if (profileData && profileData.user) {
-                    setViewedUser({ ...profileData.user, id: profileData.user.user_id });
-                    setProfile(profileData.profile || null);
+                    setViewedUser(profileData.user);
+                    setProfile(profileData.profile); // This will be null if no profile exists
                     if (!profileData.profile) {
                         setError("This user hasn't created a co-founder profile yet.");
                     }
@@ -62,9 +62,8 @@ export default function ViewUserProfilePage() {
                     throw new Error("User profile not found or data is malformed.");
                 }
                 
-                // Now that data is normalized, we can perform reliable checks.
+                // Perform the connection status check with simplified logic.
                 const isOwnProfile = String(currentUserData.user.id) === String(userId);
-
                 if (!isOwnProfile) {
                     try {
                         const statusData = await apiService.getConnectionStatus(userId);
@@ -89,7 +88,6 @@ export default function ViewUserProfilePage() {
     }, [userId, navigate]);
 
     const handleSendConnectionRequest = async () => {
-        // Use the normalized 'id' property for consistency
         if (!viewedUser || !viewedUser.id) return;
         setIsSendingRequest(true);
         try {
@@ -107,6 +105,7 @@ export default function ViewUserProfilePage() {
         return <div className="container"><div className="loading">Loading user profile...</div></div>;
     }
 
+    // Handles critical loading errors where we couldn't get basic user info.
     if (!viewedUser) {
         return (
             <div className="container error-container">
@@ -116,6 +115,7 @@ export default function ViewUserProfilePage() {
         );
     }
 
+    // Handles the case where the user exists but has not created a detailed profile.
     if (!profile) {
         return (
             <div className="container info-message-container">
@@ -132,7 +132,6 @@ export default function ViewUserProfilePage() {
     }
     
     const { personal, technical } = profile;
-    // This check is now robust because both objects are guaranteed to have an 'id' property.
     const isOwnProfile = currentUser?.id && viewedUser?.id && String(currentUser.id) === String(viewedUser.id);
 
     return (
@@ -176,4 +175,3 @@ export default function ViewUserProfilePage() {
         </div>
     );
 }
-
