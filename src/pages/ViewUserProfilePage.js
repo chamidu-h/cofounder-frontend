@@ -1,85 +1,86 @@
-// src/pages/ViewUserProfilePage.js
-import React, { useEffect, useState, useCallback } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom'; // Link for "Back"
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import apiService from '../services/apiService';
 import ProfileHeader from '../components/ProfileHeader';
 import Overview from '../components/Overview';
 import TagList from '../components/TagList';
 import ProjectInsights from '../components/ProjectInsights';
 import LanguageStats from '../components/LanguageStats';
-// You might want a button component here for "Send Connection Request"
 
 export default function ViewUserProfilePage() {
-    const { userId } = useParams(); // Get userId from URL parameter
+    const { userId } = useParams();
     const navigate = useNavigate();
 
-    const [viewedUser, setViewedUser] = useState(null); // For basic info like username, avatar
-    const [profile, setProfile] = useState(null); // For the detailed co-founder profile
+    const [viewedUser, setViewedUser] = useState(null);
+    const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
-    // Optional: Fetch current user's connection status with this viewed user
-    const [currentUser, setCurrentUser] = useState(null); // To know who is viewing
-    const [connectionStatus, setConnectionStatus] = useState(null); // e.g., null, 'pending', 'accepted'
+    const [currentUser, setCurrentUser] = useState(null);
+    const [connectionStatus, setConnectionStatus] = useState(null);
     const [isSendingRequest, setIsSendingRequest] = useState(false);
 
-    const loadViewedUserProfile = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const responseData = await apiService.getUserPublicProfile(userId);
-            console.log("ViewUserProfilePage responseData:", responseData);
-            if (responseData && responseData.profile && responseData.user) {
-                setViewedUser(responseData.user);
-                setProfile(responseData.profile);
-            } else if (responseData && responseData.user && !responseData.profile) {
-                // User exists but has no co-founder profile
-                setViewedUser(responseData.user);
-                setProfile(null);
-                setError(responseData.error || "This user hasn't created a co-founder profile yet.");
-            } else {
-                setError("User profile not found or data is malformed.");
-                setViewedUser(null);
-                setProfile(null);
-            }
-        } catch (err) {
-            console.error("ViewUserProfilePage: Load profile error:", err);
-            setError(err.response?.data?.error || err.message || "Failed to load user profile.");
-            setViewedUser(null);
-            setProfile(null);
-        } finally {
-            setLoading(false);
-        }
-    }, [userId]);
-    
-    const fetchCurrentUserAndConnectionStatus = useCallback(async () => {
-      if (!userId) return;
-      try {
-        const me = await apiService.getUser();
-        setCurrentUser(me);
-        if (me && me.user && String(me.user.id) !== String(userId)) {
-          // Pass only the viewed user's ID
-          const statusData = await apiService.getConnectionStatus(userId);
-          setConnectionStatus(statusData.status); // Assuming the API returns { status: '...' }
-        }
-      } catch (err) {
-        console.error("Error fetching current user or connection status:", err);
-        // This catch block will now handle network errors without crashing the page.
-      }
-    }, [userId]);
-
-
+    // This single useEffect handles all data fetching to prevent race conditions.
     useEffect(() => {
         const token = localStorage.getItem('auth_token');
         if (!token) {
-            navigate('/'); // Redirect to home if not logged in
+            navigate('/');
             return;
         }
-        if (userId) {
-            loadViewedUserProfile();
-            fetchCurrentUserAndConnectionStatus();
+
+        if (!userId) {
+            setLoading(false);
+            setError("No user ID provided.");
+            return;
         }
-    }, [userId, loadViewedUserProfile, fetchCurrentUserAndConnectionStatus, navigate]);
+
+        const fetchAllData = async () => {
+            setLoading(true);
+            setError(null);
+
+            try {
+                // Use Promise.all to fetch essential data in parallel.
+                const [profileData, currentUserData] = await Promise.all([
+                    apiService.getUserPublicProfile(userId),
+                    apiService.getUser()
+                ]);
+
+                // 1. Process the profile data of the user being viewed.
+                if (profileData && profileData.user) {
+                    setViewedUser(profileData.user);
+                    if (profileData.profile) {
+                        setProfile(profileData.profile);
+                    } else {
+                        setProfile(null);
+                        setError("This user hasn't created a co-founder profile yet.");
+                    }
+                } else {
+                    throw new Error("User profile not found or data is malformed.");
+                }
+
+                // 2. Set the current user.
+                setCurrentUser(currentUserData);
+
+                // 3. After getting both users, check if we need to fetch connection status.
+                const isOwnProfile = currentUserData?.user && String(currentUserData.user.id) === String(userId);
+                if (!isOwnProfile) {
+                    const statusData = await apiService.getConnectionStatus(userId);
+                    setConnectionStatus(statusData.status);
+                }
+
+            } catch (err) {
+                console.error("ViewUserProfilePage: Load data error:", err);
+                setError(err.response?.data?.error || err.message || "Failed to load user profile.");
+                setViewedUser(null);
+                setProfile(null);
+            } finally {
+                // This now only runs after ALL required API calls are complete.
+                setLoading(false);
+            }
+        };
+
+        fetchAllData();
+
+    }, [userId, navigate]);
 
     const handleSendConnectionRequest = async () => {
         if (!viewedUser || !viewedUser.user_id) return;
@@ -95,24 +96,22 @@ export default function ViewUserProfilePage() {
         }
     };
 
-
     if (loading) {
         return <div className="container"><div className="loading">Loading user profile...</div></div>;
     }
 
-    if (error && !profile) { // If error and no profile data to show at all
+    if (error && !profile) {
         return (
             <div className="container error-container">
                 <div className="error-message">{error}</div>
-                 {viewedUser && <p>Viewing profile for: <strong>{viewedUser.github_username}</strong></p>}
+                {viewedUser && <p>Viewing profile for: <strong>{viewedUser.github_username}</strong></p>}
                 <Link to="/profile" className="secondary-button">Back to My Profile</Link>
             </div>
         );
     }
     
-    // Case: User exists but no co-founder profile data (profile is null but viewedUser is not)
-    if (viewedUser && !profile && !loading) {
-         return (
+    if (viewedUser && !profile) {
+        return (
             <div className="container info-message-container">
                 <ProfileHeader 
                     name={viewedUser.github_username || "User"}
@@ -126,8 +125,8 @@ export default function ViewUserProfilePage() {
         );
     }
 
-    if (!viewedUser || !profile) { // Fallback if something unexpected happens
-         return (
+    if (!viewedUser || !profile) {
+        return (
             <div className="container info-message-container">
                 <div className="info-message">Could not load user profile.</div>
                 <Link to="/profile" className="secondary-button">Back to My Profile</Link>
@@ -136,17 +135,15 @@ export default function ViewUserProfilePage() {
     }
 
     const { personal, technical } = profile;
-    const isOwnProfile = currentUser && currentUser.user && String(currentUser.user.id) === String(viewedUser.user_id);
-
+    const isOwnProfile = currentUser?.user && String(currentUser.user.id) === String(viewedUser.user_id);
 
     return (
         <div className="container profile-page-container">
-             {/* Back Button or Breadcrumb */}
             <div style={{ marginBottom: 'var(--spacing)' }}>
                 <Link to="/profile" className="secondary-button">&larr; Back to My Profile & Suggestions</Link>
             </div>
 
-            <div className="profile-header-section"> {/* No box style */}
+            <div className="profile-header-section">
                 <h1>{viewedUser.github_username}'s Profile</h1>
                 {!isOwnProfile && connectionStatus === null && (
                     <button 
@@ -171,7 +168,7 @@ export default function ViewUserProfilePage() {
                 html_url={personal?.html_url || viewedUser.github_profile_url}
                 headline={technical?.headline || 'N/A'}
             />
-            {/* Render profile details only if 'technical' and 'personal' objects exist */}
+            
             {personal && technical ? (
                 <>
                     {technical.coFounderSummary && <Overview text={technical.coFounderSummary} />}
