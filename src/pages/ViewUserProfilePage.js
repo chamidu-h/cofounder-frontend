@@ -23,7 +23,7 @@ export default function ViewUserProfilePage() {
   const [isSendingRequest, setIsSendingRequest] = useState(false);
 
   useEffect(() => {
-    // 1️⃣ Reset state immediately on userId change to prevent flicker
+    // Reset state on userId change
     setData({
       viewedUser: null,
       profile: null,
@@ -52,7 +52,6 @@ export default function ViewUserProfilePage() {
         );
       } catch (statusError) {
         if (statusError.name !== 'AbortError') {
-          console.error('Failed to fetch connection status (non-critical):', statusError);
           setData(prev =>
             prev
               ? { ...prev, connectionStatus: null }
@@ -94,7 +93,6 @@ export default function ViewUserProfilePage() {
         }
       } catch (err) {
         if (err.name !== 'AbortError') {
-          console.error('Error loading profile:', err);
           setError(err.message || 'Failed to load user profile.');
         }
       } finally {
@@ -125,7 +123,7 @@ export default function ViewUserProfilePage() {
     }
   };
 
-  // 2️⃣ Loading state
+  // Loading state
   if (loading) {
     return (
       <div className="container">
@@ -134,7 +132,7 @@ export default function ViewUserProfilePage() {
     );
   }
 
-  // 3️⃣ Error: user not found or fetch failed
+  // Error: user not found or fetch failed
   if (error && !data.viewedUser) {
     return (
       <div className="container error-container">
@@ -146,7 +144,7 @@ export default function ViewUserProfilePage() {
     );
   }
 
-  // 4️⃣ Error: user found but no profile created
+  // Error: user found but no profile created
   if (error && data.viewedUser && !data.profile) {
     return (
       <div className="container error-container">
@@ -158,11 +156,12 @@ export default function ViewUserProfilePage() {
     );
   }
 
-  // 5️⃣ Normal render
+  // Defensive destructuring for rendering
   const { viewedUser, profile, currentUser, connectionStatus } = data;
   const isOwnProfile =
     currentUser?.id && viewedUser?.id && String(currentUser.id) === String(viewedUser.id);
-  const { personal, technical } = profile || {};
+  const personal = profile?.personal || {};
+  const technical = profile?.technical || {};
 
   return (
     <div className="container profile-page-container">
@@ -205,10 +204,10 @@ export default function ViewUserProfilePage() {
       {/* Profile Header */}
       {viewedUser && (
         <ProfileHeader
-          name={personal?.name || viewedUser?.github_username || 'User'}
-          avatar_url={personal?.avatar_url || viewedUser?.github_avatar_url}
-          html_url={personal?.html_url || viewedUser?.github_profile_url}
-          headline={technical?.headline || (error ? 'Profile Not Created' : 'N/A')}
+          name={personal.name || viewedUser.github_username || 'User'}
+          avatar_url={personal.avatar_url || viewedUser.github_avatar_url}
+          html_url={personal.html_url || viewedUser.github_profile_url}
+          headline={technical.headline || (error ? 'Profile Not Created' : 'N/A')}
         />
       )}
 
@@ -219,16 +218,16 @@ export default function ViewUserProfilePage() {
       {personal && technical && (
         <>
           {technical.coFounderSummary && <Overview text={technical.coFounderSummary} />}
-          {technical.keyStrengths?.length > 0 && (
+          {Array.isArray(technical.keyStrengths) && technical.keyStrengths.length > 0 && (
             <TagList title="Key Strengths" tags={technical.keyStrengths} />
           )}
-          {technical.potentialRoles?.length > 0 && (
+          {Array.isArray(technical.potentialRoles) && technical.potentialRoles.length > 0 && (
             <TagList title="Potential Roles" tags={technical.potentialRoles} />
           )}
           {technical.languageStats && Object.keys(technical.languageStats).length > 0 && (
             <LanguageStats data={technical.languageStats} />
           )}
-          {technical.projectInsights?.length > 0 && (
+          {Array.isArray(technical.projectInsights) && technical.projectInsights.length > 0 && (
             <ProjectInsights items={technical.projectInsights} />
           )}
         </>
