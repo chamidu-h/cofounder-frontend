@@ -23,19 +23,46 @@ export default function ViewUserProfilePage() {
   const [isSendingRequest, setIsSendingRequest] = useState(false);
 
   useEffect(() => {
+    // 1️⃣ Reset state immediately on userId change to prevent flicker
+    setData({
+      viewedUser: null,
+      profile: null,
+      currentUser: null,
+      connectionStatus: null,
+    });
+    setLoading(true);
+    setError(null);
+
     const token = localStorage.getItem('auth_token');
     if (!token || !userId) {
       navigate('/');
       return;
     }
 
-    const controller = new AbortController(); // 2️⃣ cancel stale fetches
+    const controller = new AbortController();
     const { signal } = controller;
 
-    const fetchProfileData = async () => {
-      setLoading(true);
-      setError(null);
+    const fetchConnectionStatus = async (targetUserId, signal) => {
+      try {
+        const statusData = await apiService.getConnectionStatus(targetUserId, signal);
+        setData(prev =>
+          prev
+            ? { ...prev, connectionStatus: statusData.status }
+            : prev
+        );
+      } catch (statusError) {
+        if (statusError.name !== 'AbortError') {
+          console.error('Failed to fetch connection status (non-critical):', statusError);
+          setData(prev =>
+            prev
+              ? { ...prev, connectionStatus: null }
+              : prev
+          );
+        }
+      }
+    };
 
+    const fetchProfileData = async () => {
       try {
         const [profileData, currentUserData] = await Promise.all([
           apiService.getUserPublicProfile(userId, signal),
@@ -62,7 +89,6 @@ export default function ViewUserProfilePage() {
           setError("This user hasn't created a co-founder profile yet.");
         }
 
-        // fetch connection status separately
         if (!isOwnProfile) {
           fetchConnectionStatus(userId, signal);
         }
@@ -76,30 +102,8 @@ export default function ViewUserProfilePage() {
       }
     };
 
-    const fetchConnectionStatus = async (targetUserId, signal) => {
-      try {
-        const statusData = await apiService.getConnectionStatus(targetUserId, signal);
-        // 1️⃣ preserve previous state
-        setData(prev =>
-          prev
-            ? { ...prev, connectionStatus: statusData.status }
-            : prev
-        );
-      } catch (statusError) {
-        if (statusError.name !== 'AbortError') {
-          console.error('Failed to fetch connection status (non-critical):', statusError);
-          setData(prev =>
-            prev
-              ? { ...prev, connectionStatus: null }
-              : prev
-          );
-        }
-      }
-    };
-
     fetchProfileData();
-
-    return () => controller.abort(); // cleanup for Strict Mode double-mount
+    return () => controller.abort();
   }, [userId, navigate]);
 
   const handleSendConnectionRequest = async () => {
@@ -121,6 +125,7 @@ export default function ViewUserProfilePage() {
     }
   };
 
+  // 2️⃣ Loading state
   if (loading) {
     return (
       <div className="container">
@@ -129,6 +134,7 @@ export default function ViewUserProfilePage() {
     );
   }
 
+  // 3️⃣ Error: user not found or fetch failed
   if (error && !data.viewedUser) {
     return (
       <div className="container error-container">
@@ -140,6 +146,19 @@ export default function ViewUserProfilePage() {
     );
   }
 
+  // 4️⃣ Error: user found but no profile created
+  if (error && data.viewedUser && !data.profile) {
+    return (
+      <div className="container error-container">
+        <div className="error-message">{error}</div>
+        <Link to="/profile" className="secondary-button">
+          Back to My Profile
+        </Link>
+      </div>
+    );
+  }
+
+  // 5️⃣ Normal render
   const { viewedUser, profile, currentUser, connectionStatus } = data;
   const isOwnProfile =
     currentUser?.id && viewedUser?.id && String(currentUser.id) === String(viewedUser.id);
@@ -183,7 +202,7 @@ export default function ViewUserProfilePage() {
         )}
       </div>
 
-      {/* 3️⃣ render children only when safe */}
+      {/* Profile Header */}
       {viewedUser && (
         <ProfileHeader
           name={personal?.name || viewedUser?.github_username || 'User'}
@@ -193,8 +212,10 @@ export default function ViewUserProfilePage() {
         />
       )}
 
+      {/* Info message if profile not created */}
       {error && <div className="info-message">{error}</div>}
 
+      {/* Profile Details */}
       {personal && technical && (
         <>
           {technical.coFounderSummary && <Overview text={technical.coFounderSummary} />}
