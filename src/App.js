@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import OAuthCallback from './pages/OAuthCallback';
 import ProfilePage from './pages/ProfilePage';
 import ProfileGeneration from './pages/ProfileGeneration';
+import DebugBoundary from './components/DebugBoundary';
 import ViewUserProfilePage from './pages/ViewUserProfilePage';
 // --- NEW IMPORTS ---
 import JobBoardPage from './pages/JobBoardPage';
@@ -17,7 +18,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/auth/callback" element={<OAuthCallback />} />
             <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/profile/view/:userId" element={<ViewUserProfilePage />} />
+            <Route path="/profile/view/:userId" element={<DebugBoundary>  <ViewUserProfilePage /> </DebugBoundary>} />
             <Route path="/generate" element={<ProfileGeneration />} />
 
             {/* --- NEW ROUTES --- */}
