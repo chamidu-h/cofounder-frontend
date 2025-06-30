@@ -450,6 +450,352 @@ a:hover {
 }
 
 /* ========================================
+   CO-FOUNDER SUGGESTION CARD - ENHANCED
+======================================== */
+.cofounder-suggestion-card {
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 0;
+  margin-bottom: var(--spacing);
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+  animation: fadeInUp 0.6s ease-out both;
+}
+
+.cofounder-suggestion-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+
+.cofounder-suggestion-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--color-primary-light);
+}
+
+.cofounder-suggestion-card:hover::before {
+  opacity: 1;
+}
+
+/* Card Header */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing) var(--spacing) 0;
+  margin-bottom: var(--spacing-sm);
+}
+
+.avatar-section {
+  display: flex;
+  align-items: center;
+}
+
+.avatar-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.user-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 3px solid var(--color-border-light);
+  object-fit: cover;
+  transition: var(--transition);
+  background: var(--color-surface);
+}
+
+.user-avatar:hover {
+  transform: scale(1.05);
+  border-color: var(--color-primary-light);
+  box-shadow: var(--shadow);
+}
+
+.status-indicator {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 14px;
+  height: 14px;
+  border: 3px solid white;
+  border-radius: 50%;
+  box-shadow: var(--shadow-sm);
+}
+
+.status-indicator.online {
+  background: var(--color-success);
+  animation: pulse 2s infinite;
+}
+
+/* Match Score Indicator */
+.match-indicator {
+  display: flex;
+  align-items: center;
+}
+
+.match-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+  min-width: 70px;
+}
+
+.match-score:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: var(--shadow-md);
+}
+
+.score-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 0.125rem;
+}
+
+.score-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Card Body */
+.card-body {
+  padding: 0 var(--spacing) var(--spacing-sm);
+}
+
+.user-info {
+  margin-bottom: var(--spacing);
+}
+
+.username-link {
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.username {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 0 0 0.5rem 0;
+  transition: var(--transition);
+}
+
+.username-link:hover .username {
+  color: var(--color-accent);
+  transform: translateX(4px);
+}
+
+.user-headline {
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* Strengths Section */
+.strengths-section {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius);
+  padding: var(--spacing-sm);
+  margin-top: var(--spacing);
+}
+
+.strengths-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: var(--spacing-sm);
+}
+
+.strengths-icon {
+  font-size: 1rem;
+}
+
+.strengths-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.strengths-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.strength-pill {
+  background: linear-gradient(135deg, var(--color-primary-light), rgba(255, 255, 255, 0.9));
+  color: var(--color-primary-dark);
+  padding: 0.4rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid var(--color-primary-light);
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.strength-pill:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  color: white;
+}
+
+.strength-pill.overflow {
+  background: var(--color-border-light);
+  color: var(--color-text-muted);
+  border-color: var(--color-border);
+}
+
+.strength-pill.overflow:hover {
+  background: var(--color-text-muted);
+  color: white;
+}
+
+/* Card Footer */
+.card-footer {
+  padding: var(--spacing);
+  border-top: 1px solid var(--color-border-light);
+  background: var(--color-surface);
+}
+
+.connect-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.connect-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left var(--transition);
+}
+
+.connect-button:hover::before {
+  left: 100%;
+}
+
+.connect-button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.connect-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.connect-button.loading {
+  pointer-events: none;
+}
+
+.connect-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  border-top-color: currentColor;
+  animation: spin 1s linear infinite;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .card-header {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    align-items: center;
+    text-align: center;
+  }
+  
+  .match-score {
+    min-width: 80px;
+  }
+  
+  .strengths-grid {
+    justify-content: center;
+  }
+  
+  .user-info {
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .cofounder-suggestion-card {
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .card-header,
+  .card-body,
+  .card-footer {
+    padding: var(--spacing-sm);
+  }
+  
+  .user-avatar {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .username {
+    font-size: 1.1rem;
+  }
+  
+  .strength-pill {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+  }
+}
+
+
+/* ========================================
    CAREER HUB SECTION
 ======================================== */
 .career-hub-section {

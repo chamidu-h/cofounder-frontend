@@ -23,71 +23,89 @@ const SuggestionItem = ({ suggestion, onConnect, index = 0 }) => {
 
     return (
         <div 
-            className="suggestion-item"
-            style={{ animationDelay: `${index * 0.1}s` }}
-        >
-            <div className="item-avatar-container">
+    className="cofounder-suggestion-card"
+    style={{ animationDelay: `${index * 0.1}s` }}
+>
+    {/* Card Header with Avatar and Match Score */}
+    <div className="card-header">
+        <div className="avatar-section">
+            <div className="avatar-wrapper">
                 <img 
                     src={suggestion.github_avatar_url} 
                     alt={suggestion.github_username} 
-                    className="item-avatar"
+                    className="user-avatar"
                     loading="lazy"
                 />
-                <div className="avatar-status online"></div>
-            </div>
-            
-            <div className="item-content">
-                <div className="item-header">
-                    <Link 
-                        to={`/profile/view/${suggestion.user_id}`} 
-                        className="item-name-link"
-                    >
-                        {suggestion.github_username}
-                    </Link>
-                    <div className="match-score-badge">
-                        {suggestion.score}% Match
-                    </div>
-                </div>
-                
-                {suggestion.headline && (
-                    <p className="item-headline">{suggestion.headline}</p>
-                )}
-                
-                {suggestion.keyStrengths && suggestion.keyStrengths.length > 0 && (
-                    <div className="item-strengths">
-                        <span className="strengths-label">Strengths:</span>
-                        <div className="strengths-tags">
-                            {suggestion.keyStrengths.slice(0, 3).map((strength, idx) => (
-                                <span key={idx} className="strength-tag">{strength}</span>
-                            ))}
-                            {suggestion.keyStrengths.length > 3 && (
-                                <span className="strength-tag more">+{suggestion.keyStrengths.length - 3}</span>
-                            )}
-                        </div>
-                    </div>
-                )}
-            </div>
-            
-            <div className="item-actions">
-                <button 
-                    onClick={handleConnect}
-                    disabled={isConnecting}
-                    className={`btn btn-primary ${isConnecting ? 'btn-loading' : ''}`}
-                >
-                    {isConnecting ? (
-                        <>
-                            <span className="btn-spinner"></span>
-                            Connecting...
-                        </>
-                    ) : (
-                        <>
-                            <span className="btn-icon">🤝</span>
-                            Connect
-                        </>
-                    )}
-                </button>
+                <div className="status-indicator online"></div>
             </div>
         </div>
+        
+        <div className="match-indicator">
+            <div className="match-score">
+                <span className="score-value">{suggestion.score}%</span>
+                <span className="score-label">Match</span>
+            </div>
+        </div>
+    </div>
+
+    {/* Card Body with User Info */}
+    <div className="card-body">
+        <div className="user-info">
+            <Link 
+                to={`/profile/view/${suggestion.user_id}`} 
+                className="username-link"
+            >
+                <h3 className="username">{suggestion.github_username}</h3>
+            </Link>
+            
+            {suggestion.headline && (
+                <p className="user-headline">{suggestion.headline}</p>
+            )}
+        </div>
+
+        {/* Strengths Section */}
+        {suggestion.keyStrengths && suggestion.keyStrengths.length > 0 && (
+            <div className="strengths-section">
+                <div className="strengths-header">
+                    <span className="strengths-icon">💪</span>
+                    <span className="strengths-title">Key Strengths</span>
+                </div>
+                <div className="strengths-grid">
+                    {suggestion.keyStrengths.slice(0, 3).map((strength, idx) => (
+                        <span key={idx} className="strength-pill">{strength}</span>
+                    ))}
+                    {suggestion.keyStrengths.length > 3 && (
+                        <span className="strength-pill overflow">
+                            +{suggestion.keyStrengths.length - 3} more
+                        </span>
+                    )}
+                </div>
+            </div>
+        )}
+    </div>
+
+    {/* Card Footer with Actions */}
+    <div className="card-footer">
+        <button 
+            onClick={handleConnect}
+            disabled={isConnecting}
+            className={`connect-button ${isConnecting ? 'loading' : ''}`}
+        >
+            {isConnecting ? (
+                <>
+                    <div className="loading-spinner"></div>
+                    <span>Connecting...</span>
+                </>
+            ) : (
+                <>
+                    <span className="connect-icon">🤝</span>
+                    <span>Connect</span>
+                </>
+            )}
+        </button>
+    </div>
+</div>
+
     );
 };
 
