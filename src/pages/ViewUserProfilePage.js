@@ -12,6 +12,9 @@ export default function ViewUserProfilePage() {
   const { userId } = useParams();
   const navigate = useNavigate();
 
+  // Animation state for CSS transitions
+  const [isAnimated, setIsAnimated] = useState(false);
+
   const [data, setData] = useState({
     viewedUser: null,
     profile: null,
@@ -21,6 +24,12 @@ export default function ViewUserProfilePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isSendingRequest, setIsSendingRequest] = useState(false);
+
+  // Initialize animation after component mounts
+  useEffect(() => {
+    const timer = setTimeout(() => setIsAnimated(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     // Reset state on userId change
@@ -52,6 +61,7 @@ export default function ViewUserProfilePage() {
         );
       } catch (statusError) {
         if (statusError.name !== 'AbortError') {
+          console.warn('Failed to fetch connection status:', statusError);
           setData(prev =>
             prev
               ? { ...prev, connectionStatus: null }
@@ -93,6 +103,7 @@ export default function ViewUserProfilePage() {
         }
       } catch (err) {
         if (err.name !== 'AbortError') {
+          console.error('Profile fetch error:', err);
           setError(err.message || 'Failed to load user profile.');
         }
       } finally {
@@ -117,17 +128,30 @@ export default function ViewUserProfilePage() {
           : prev
       );
     } catch (err) {
+      console.error('Connection request error:', err);
       alert(`Error: ${err.message}`);
     } finally {
       setIsSendingRequest(false);
     }
   };
 
+  // Debug logging (remove in production)
+  console.log('ViewUserProfilePage render state:', {
+    loading,
+    error,
+    hasViewedUser: !!data.viewedUser,
+    hasProfile: !!data.profile,
+    isAnimated
+  });
+
   // Loading state
   if (loading) {
     return (
-      <div className="container">
-        <div className="loading">Loading user profile...</div>
+      <div className={`container profile-page-container ${isAnimated ? 'animate-in' : ''}`}>
+        <div className="profile-loading">
+          <div className="loading-spinner-large"></div>
+          <p>Loading user profile...</p>
+        </div>
       </div>
     );
   }
@@ -135,11 +159,16 @@ export default function ViewUserProfilePage() {
   // Error: user not found or fetch failed
   if (error && !data.viewedUser) {
     return (
-      <div className="container error-container">
-        <div className="error-message">{error}</div>
-        <Link to="/profile" className="secondary-button">
-          Back to My Profile
-        </Link>
+      <div className={`container profile-page-container ${isAnimated ? 'animate-in' : ''}`}>
+        <div className="profile-error-state">
+          <div className="error-icon">⚠️</div>
+          <div className="error-message">{error}</div>
+          <div className="error-actions">
+            <Link to="/profile" className="btn btn-secondary">
+              Back to My Profile
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }
@@ -147,11 +176,16 @@ export default function ViewUserProfilePage() {
   // Error: user found but no profile created
   if (error && data.viewedUser && !data.profile) {
     return (
-      <div className="container error-container">
-        <div className="error-message">{error}</div>
-        <Link to="/profile" className="secondary-button">
-          Back to My Profile
-        </Link>
+      <div className={`container profile-page-container ${isAnimated ? 'animate-in' : ''}`}>
+        <div className="profile-empty-state">
+          <div className="empty-icon">👤</div>
+          <div className="error-message">{error}</div>
+          <div className="empty-actions">
+            <Link to="/profile" className="btn btn-secondary">
+              Back to My Profile
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }
@@ -164,44 +198,57 @@ export default function ViewUserProfilePage() {
   const technical = profile?.technical || {};
 
   return (
-    <div className="container profile-page-container">
+    <div className={`container profile-page-container ${isAnimated ? 'animate-in' : ''}`}>
+      {/* Back Navigation */}
       <div style={{ marginBottom: 'var(--spacing)' }}>
-        <Link to="/profile" className="secondary-button">
-          &larr; Back to My Profile & Suggestions
+        <Link to="/profile" className="btn btn-secondary">
+          ← Back to My Profile & Suggestions
         </Link>
       </div>
 
+      {/* Profile Header Section */}
       <div className="profile-header-section">
-        <h1>
-          {viewedUser?.github_username
-            ? `${viewedUser.github_username}'s Profile`
-            : 'User Profile'}
-        </h1>
+        <div className="header-content">
+          <h1 className="profile-name">
+            {viewedUser?.github_username
+              ? `${viewedUser.github_username}'s Profile`
+              : 'User Profile'}
+          </h1>
 
-        {!isOwnProfile && connectionStatus === null && (
-          <button
-            onClick={handleSendConnectionRequest}
-            className="primary-button"
-            disabled={isSendingRequest}
-          >
-            {isSendingRequest ? 'Sending...' : 'Send Connection Request'}
-          </button>
-        )}
+          <div className="header-actions">
+            {!isOwnProfile && connectionStatus === null && (
+              <button
+                onClick={handleSendConnectionRequest}
+                className="btn btn-primary"
+                disabled={isSendingRequest}
+              >
+                {isSendingRequest ? (
+                  <>
+                    <div className="btn-spinner"></div>
+                    Sending...
+                  </>
+                ) : (
+                  'Send Connection Request'
+                )}
+              </button>
+            )}
 
-        {!isOwnProfile && connectionStatus === 'pending' && (
-          <button className="disabled-button" disabled>
-            Request Sent
-          </button>
-        )}
+            {!isOwnProfile && connectionStatus === 'pending' && (
+              <button className="btn btn-disabled" disabled>
+                Request Sent
+              </button>
+            )}
 
-        {!isOwnProfile && connectionStatus === 'accepted' && (
-          <button className="disabled-button" disabled>
-            Connected
-          </button>
-        )}
+            {!isOwnProfile && connectionStatus === 'accepted' && (
+              <button className="btn btn-disabled" disabled>
+                ✓ Connected
+              </button>
+            )}
+          </div>
+        </div>
       </div>
 
-      {/* Profile Header */}
+      {/* Profile Header Component */}
       {viewedUser && (
         <ProfileHeader
           name={personal.name || viewedUser.github_username || 'User'}
@@ -212,25 +259,69 @@ export default function ViewUserProfilePage() {
       )}
 
       {/* Info message if profile not created */}
-      {error && <div className="info-message">{error}</div>}
+      {error && data.viewedUser && (
+        <div className="info-message">
+          <p>{error}</p>
+        </div>
+      )}
 
-      {/* Profile Details */}
-      {personal && technical && (
-        <>
-          {technical.coFounderSummary && <Overview text={technical.coFounderSummary} />}
-          {Array.isArray(technical.keyStrengths) && technical.keyStrengths.length > 0 && (
-            <TagList title="Key Strengths" tags={technical.keyStrengths} />
-          )}
-          {Array.isArray(technical.potentialRoles) && technical.potentialRoles.length > 0 && (
-            <TagList title="Potential Roles" tags={technical.potentialRoles} />
-          )}
-          {technical.languageStats && Object.keys(technical.languageStats).length > 0 && (
-            <LanguageStats data={technical.languageStats} />
-          )}
-          {Array.isArray(technical.projectInsights) && technical.projectInsights.length > 0 && (
-            <ProjectInsights items={technical.projectInsights} />
-          )}
-        </>
+      {/* Profile Details - Only show if profile exists */}
+      {profile && (
+        <div className="profile-content-grid">
+          <div className="profile-main-content">
+            {/* Overview Section */}
+            {technical?.coFounderSummary && (
+              <Overview text={technical.coFounderSummary} />
+            )}
+
+            {/* Key Strengths */}
+            {Array.isArray(technical?.keyStrengths) && technical.keyStrengths.length > 0 && (
+              <TagList title="Key Strengths" tags={technical.keyStrengths} />
+            )}
+
+            {/* Potential Roles */}
+            {Array.isArray(technical?.potentialRoles) && technical.potentialRoles.length > 0 && (
+              <TagList title="Potential Roles" tags={technical.potentialRoles} />
+            )}
+
+            {/* Project Insights */}
+            {Array.isArray(technical?.projectInsights) && technical.projectInsights.length > 0 && (
+              <ProjectInsights items={technical.projectInsights} />
+            )}
+          </div>
+
+          <div className="profile-sidebar">
+            {/* Language Stats */}
+            {technical?.languageStats && Object.keys(technical.languageStats).length > 0 && (
+              <LanguageStats data={technical.languageStats} />
+            )}
+
+            {/* Experience Badge */}
+            {viewedUser?.github_username && (
+              <div className="experience-section">
+                <div className="experience-badge">
+                  <div className="experience-icon">💼</div>
+                  <div className="experience-text">
+                    GitHub Developer
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Fallback content if no profile data */}
+      {!profile && !error && viewedUser && (
+        <div className="profile-empty-state">
+          <div className="empty-icon">📝</div>
+          <p>This user hasn't set up their co-founder profile yet.</p>
+          <div className="empty-actions">
+            <Link to="/profile" className="btn btn-secondary">
+              Back to My Profile
+            </Link>
+          </div>
+        </div>
       )}
     </div>
   );
