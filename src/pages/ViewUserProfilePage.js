@@ -80,8 +80,10 @@ export default function ViewUserProfilePage() {
             } catch (mainError) {
                 console.error("Critical error occurred while loading profile page:", mainError);
                 setError(mainError.response?.data?.error || mainError.message || "Failed to load user profile.");
-                setViewedUser(null);
-                setProfile(null);
+                // MODIFIED: Removed setViewedUser(null) and setProfile(null) to prevent state reset
+                // This allows checking if profile loads without fallback to empty page
+                console.log("Error encountered, but states not reset for debugging. Current viewedUser:", viewedUser);
+                console.log("Current profile:", profile);
             } finally {
                 setLoading(false);
             }
