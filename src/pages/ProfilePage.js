@@ -8,7 +8,7 @@ import TagList from '../components/TagList';
 import ProjectInsights from '../components/ProjectInsights';
 import LanguageStats from '../components/LanguageStats';
 
-// Enhanced Item Components with Modern Styling
+// Enhanced Suggestion Item Component with New Algorithm Data
 const SuggestionItem = ({ suggestion, onConnect, index = 0 }) => {
     const [isConnecting, setIsConnecting] = useState(false);
     
@@ -21,91 +21,217 @@ const SuggestionItem = ({ suggestion, onConnect, index = 0 }) => {
         }
     };
 
+    // Get match strength color
+    const getMatchStrengthColor = (strength) => {
+        switch (strength) {
+            case 'Excellent': return '#10B981'; // Green
+            case 'High': return '#3B82F6';      // Blue
+            case 'Medium': return '#F59E0B';    // Orange
+            case 'Low': return '#6B7280';       // Gray
+            default: return '#6B7280';
+        }
+    };
+
     return (
         <div 
-    className="cofounder-suggestion-card"
-    style={{ animationDelay: `${index * 0.1}s` }}
->
-    {/* Card Header with Avatar and Match Score */}
-    <div className="card-header">
-        <div className="avatar-section">
-            <div className="avatar-wrapper">
-                <img 
-                    src={suggestion.github_avatar_url} 
-                    alt={suggestion.github_username} 
-                    className="user-avatar"
-                    loading="lazy"
-                />
-                <div className="status-indicator online"></div>
-            </div>
-        </div>
-        
-        <div className="match-indicator">
-            <div className="match-score">
-                <span className="score-value">{suggestion.score}%</span>
-                <span className="score-label">Match</span>
-            </div>
-        </div>
-    </div>
-
-    {/* Card Body with User Info */}
-    <div className="card-body">
-        <div className="user-info">
-            <Link 
-                to={`/profile/view/${suggestion.user_id}`} 
-                className="username-link"
-            >
-                <h3 className="username">{suggestion.github_username}</h3>
-            </Link>
-            
-            {suggestion.headline && (
-                <p className="user-headline">{suggestion.headline}</p>
-            )}
-        </div>
-
-        {/* Strengths Section */}
-        {suggestion.keyStrengths && suggestion.keyStrengths.length > 0 && (
-            <div className="strengths-section">
-                <div className="strengths-header">
-                    <span className="strengths-icon">💪</span>
-                    <span className="strengths-title">Key Strengths</span>
+            className="cofounder-suggestion-card enhanced"
+            style={{ animationDelay: `${index * 0.1}s` }}
+        >
+            {/* Card Header with Avatar and Enhanced Match Score */}
+            <div className="card-header">
+                <div className="avatar-section">
+                    <div className="avatar-wrapper">
+                        <img 
+                            src={suggestion.github_avatar_url} 
+                            alt={suggestion.github_username} 
+                            className="user-avatar"
+                            loading="lazy"
+                        />
+                        <div className="status-indicator online"></div>
+                    </div>
                 </div>
-                <div className="strengths-grid">
-                    {suggestion.keyStrengths.slice(0, 3).map((strength, idx) => (
-                        <span key={idx} className="strength-pill">{strength}</span>
-                    ))}
-                    {suggestion.keyStrengths.length > 3 && (
-                        <span className="strength-pill overflow">
-                            +{suggestion.keyStrengths.length - 3} more
+                
+                <div className="match-indicator enhanced">
+                    <div className="match-score">
+                        <span className="score-value">{suggestion.matchScore}%</span>
+                        <span 
+                            className="score-label"
+                            style={{ color: getMatchStrengthColor(suggestion.matchStrength) }}
+                        >
+                            {suggestion.matchStrength} Match
                         </span>
+                    </div>
+                    <div className="match-progress">
+                        <div 
+                            className="match-progress-bar"
+                            style={{ 
+                                width: `${suggestion.matchScore}%`,
+                                backgroundColor: getMatchStrengthColor(suggestion.matchStrength)
+                            }}
+                        ></div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Card Body with Enhanced User Info */}
+            <div className="card-body">
+                <div className="user-info">
+                    <Link 
+                        to={`/profile/view/${suggestion.user_id}`} 
+                        className="username-link"
+                    >
+                        <h3 className="username">{suggestion.github_username}</h3>
+                    </Link>
+                    
+                    {suggestion.headline && (
+                        <p className="user-headline">{suggestion.headline}</p>
+                    )}
+
+                    {suggestion.estimatedExperience && suggestion.estimatedExperience !== 'N/A' && (
+                        <div className="experience-badge-small">
+                            <span className="experience-icon">🎯</span>
+                            <span>{suggestion.estimatedExperience}</span>
+                        </div>
                     )}
                 </div>
+
+                {/* Top Matching Areas */}
+                {suggestion.topMatchingAreas && suggestion.topMatchingAreas.length > 0 && (
+                    <div className="matching-areas-section">
+                        <div className="matching-areas-header">
+                            <span className="matching-icon">🎯</span>
+                            <span className="matching-title">Top Matches</span>
+                        </div>
+                        <div className="matching-areas-list">
+                            {suggestion.topMatchingAreas.slice(0, 2).map((area, idx) => (
+                                <div key={idx} className="matching-area-item">
+                                    <span className="area-name">{area.area}</span>
+                                    <span className="area-score">{area.score}%</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Common Technologies */}
+                {suggestion.commonTechnologies && suggestion.commonTechnologies.length > 0 && (
+                    <div className="common-tech-section">
+                        <div className="common-tech-header">
+                            <span className="tech-icon">⚡</span>
+                            <span className="tech-title">Shared Tech</span>
+                        </div>
+                        <div className="common-tech-list">
+                            {suggestion.commonTechnologies.slice(0, 4).map((tech, idx) => (
+                                <span key={idx} className="tech-pill common">{tech}</span>
+                            ))}
+                            {suggestion.commonTechnologies.length > 4 && (
+                                <span className="tech-pill overflow">
+                                    +{suggestion.commonTechnologies.length - 4}
+                                </span>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {/* Strengths Section */}
+                {suggestion.keyStrengths && suggestion.keyStrengths.length > 0 && (
+                    <div className="strengths-section">
+                        <div className="strengths-header">
+                            <span className="strengths-icon">💪</span>
+                            <span className="strengths-title">Key Strengths</span>
+                        </div>
+                        <div className="strengths-grid">
+                            {suggestion.keyStrengths.slice(0, 3).map((strength, idx) => (
+                                <span key={idx} className="strength-pill">{strength}</span>
+                            ))}
+                            {suggestion.keyStrengths.length > 3 && (
+                                <span className="strength-pill overflow">
+                                    +{suggestion.keyStrengths.length - 3} more
+                                </span>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {/* Potential Roles */}
+                {suggestion.potentialRoles && suggestion.potentialRoles.length > 0 && (
+                    <div className="roles-section">
+                        <div className="roles-header">
+                            <span className="roles-icon">👔</span>
+                            <span className="roles-title">Potential Roles</span>
+                        </div>
+                        <div className="roles-list">
+                            {suggestion.potentialRoles.map((role, idx) => (
+                                <span key={idx} className="role-pill">{role}</span>
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div>
-        )}
-    </div>
 
-    {/* Card Footer with Actions */}
-    <div className="card-footer">
-        <button 
-            onClick={handleConnect}
-            disabled={isConnecting}
-            className={`connect-button ${isConnecting ? 'loading' : ''}`}
-        >
-            {isConnecting ? (
-                <>
-                    <div className="loading-spinner"></div>
-                    <span>Connecting...</span>
-                </>
-            ) : (
-                <>
-                    <span className="connect-icon">🤝</span>
-                    <span>Connect</span>
-                </>
+            {/* Card Footer with Actions */}
+            <div className="card-footer">
+                <div className="footer-info">
+                    <span className="match-strength" style={{ color: getMatchStrengthColor(suggestion.matchStrength) }}>
+                        {suggestion.matchStrength} compatibility
+                    </span>
+                </div>
+                <button 
+                    onClick={handleConnect}
+                    disabled={isConnecting}
+                    className={`connect-button ${isConnecting ? 'loading' : ''} ${suggestion.matchStrength.toLowerCase()}`}
+                >
+                    {isConnecting ? (
+                        <>
+                            <div className="loading-spinner"></div>
+                            <span>Connecting...</span>
+                        </>
+                    ) : (
+                        <>
+                            <span className="connect-icon">🤝</span>
+                            <span>Connect</span>
+                        </>
+                    )}
+                </button>
+            </div>
+
+            {/* Optional: Expandable Score Breakdown */}
+            {suggestion.scoreBreakdown && (
+                <div className="score-breakdown-toggle">
+                    <button 
+                        className="breakdown-toggle-btn"
+                        onClick={() => {
+                            const breakdown = document.getElementById(`breakdown-${suggestion.user_id}`);
+                            breakdown.style.display = breakdown.style.display === 'none' ? 'block' : 'none';
+                        }}
+                    >
+                        <span>View Match Details</span>
+                        <span className="toggle-arrow">▼</span>
+                    </button>
+                    <div id={`breakdown-${suggestion.user_id}`} className="score-breakdown" style={{ display: 'none' }}>
+                        <h4>Match Breakdown</h4>
+                        <div className="breakdown-grid">
+                            {Object.entries(suggestion.scoreBreakdown).map(([category, score]) => (
+                                <div key={category} className="breakdown-item">
+                                    <span className="breakdown-category">
+                                        {category.replace(/([A-Z])/g, ' $1').trim()}
+                                    </span>
+                                    <div className="breakdown-score">
+                                        <div className="breakdown-bar">
+                                            <div 
+                                                className="breakdown-fill"
+                                                style={{ width: `${score}%` }}
+                                            ></div>
+                                        </div>
+                                        <span className="breakdown-value">{score}%</span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
             )}
-        </button>
-    </div>
-</div>
-
+        </div>
     );
 };
 
@@ -283,6 +409,7 @@ export default function ProfilePage() {
 
     // Connections state
     const [suggestions, setSuggestions] = useState([]);
+    const [suggestionsStats, setSuggestionsStats] = useState(null);
     const [loadingSuggestions, setLoadingSuggestions] = useState(false);
     const [suggestionsError, setSuggestionsError] = useState(null);
 
@@ -340,7 +467,10 @@ export default function ProfilePage() {
                 apiService.getActiveConnections()
             ]);
 
+            // Handle enhanced suggestions response
             setSuggestions(suggData.suggestions || []);
+            setSuggestionsStats(suggData.stats || null);
+            
             setPendingRequests(pendingData.pendingRequests || []);
             setSentRequests(sentData.sentRequests || []);
             setActiveConnections(activeData.activeConnections || []);
@@ -604,7 +734,7 @@ export default function ProfilePage() {
 
                 {/* Right Column - Connections */}
                 <div className="profile-sidebar">
-                    {/* Suggested Co-founders */}
+                    {/* Enhanced Suggested Co-founders */}
                     <section className="connections-section">
                         <div className="section-header">
                             <h3>
@@ -615,6 +745,26 @@ export default function ProfilePage() {
                                 <span className="count-badge">{suggestions.length}</span>
                             )}
                         </div>
+                        
+                        {/* Suggestions Statistics */}
+                        {suggestionsStats && (
+                            <div className="suggestions-stats">
+                                <div className="stats-grid">
+                                    <div className="stat-item">
+                                        <span className="stat-value">{suggestionsStats.totalCandidates}</span>
+                                        <span className="stat-label">Candidates</span>
+                                    </div>
+                                    <div className="stat-item">
+                                        <span className="stat-value">{suggestionsStats.qualifiedMatches}</span>
+                                        <span className="stat-label">Qualified</span>
+                                    </div>
+                                    <div className="stat-item">
+                                        <span className="stat-value">{suggestionsStats.averageMatchScore}%</span>
+                                        <span className="stat-label">Avg Match</span>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                         
                         <div className="section-content">
                             {loadingSuggestions && (
