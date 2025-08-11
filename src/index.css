@@ -411,7 +411,7 @@ a:hover {
   color: var(--color-text-muted);
 }
 
-.stat-value {
+.profile-stat-value {
   font-weight: 600;
   color: var(--color-primary);
   background: var(--color-primary-light);
