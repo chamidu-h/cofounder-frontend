@@ -400,7 +400,7 @@ a:hover {
   gap: 0.5rem;
 }
 
-.stat-item {
+.profile-stat-item {
   display: flex;
   align-items: center;
   gap: 0.5rem;

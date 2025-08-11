@@ -135,7 +135,7 @@ export default function Home() {
                                             Welcome back, <span className="username">{user.user?.username || 'User'}</span>!
                                         </h2>
                                         <div className="profile-stats">
-                                            <div className="stat-item">
+                                            <div className="profile-stat-item">
                                                 <span className="stat-label">Generations used:</span>
                                                 <span className="stat-value">
                                                     {user.generationCount !== undefined ? user.generationCount : 'N/A'}/3
